@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Dine — Digital Menu</title>
+  <meta name="description" content="Browse our menu, pick your favourites, and show the code to your waiter." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #17171b;
+      --surface2:  #1f1f26;
+      --border:    #2a2a35;
+      --accent:    #f5a623;
+      --accent2:   #e8442c;
+      --text:      #f0f0f5;
+      --muted:     #888899;
+      --green:     #3ecf8e;
+      --radius:    16px;
+      --cart-h:    80px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ─── HEADER ──────────────────────────────────────────── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, var(--bg) 80%, transparent);
+      padding: 20px 20px 12px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .table-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* ─── CATEGORY TABS ───────────────────────────────────── */
+    .tabs-wrap {
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0 20px;
+      margin-bottom: 4px;
+    }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      width: max-content;
+      padding: 8px 0;
+    }
+
+    .tab {
+      padding: 8px 18px;
+      border-radius: 30px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(245,166,35,0.35);
+    }
+
+    /* ─── SECTION HEADING ─────────────────────────────────── */
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      padding: 8px 20px 4px;
+      color: var(--text);
+    }
+
+    /* ─── MENU GRID ───────────────────────────────────────── */
+    .menu-list {
+      padding: 0 16px;
+      padding-bottom: calc(var(--cart-h) + 24px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,166,35,0.06), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:active { transform: scale(0.98); }
+    .card.has-items { border-color: rgba(245,166,35,0.4); }
+    .card.has-items::before { opacity: 1; }
+
+    .card-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: var(--surface2);
+      flex-shrink: 0;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-body { flex: 1; min-width: 0; }
+
+    .card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .card-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* ─── QTY CONTROL ─────────────────────────────────────── */
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      font-family: 'Outfit', sans-serif;
+      line-height: 1;
+    }
+
+    .qty-btn.minus {
+      background: var(--surface2);
+      color: var(--muted);
+    }
+    .qty-btn.minus:active { transform: scale(0.85); background: var(--border); }
+
+    .qty-btn.plus {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(245,166,35,0.4);
+    }
+    .qty-btn.plus:active { transform: scale(0.85); }
+
+    .qty-num {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      min-width: 20px;
+      text-align: center;
+    }
+
+    /* ─── VEG / NON-VEG DOT ──────────────────────────────── */
+    .veg-dot {
+      width: 12px; height: 12px;
+      border-radius: 2px;
+      border: 1.5px solid;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .veg-dot::after {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .veg-dot.veg { border-color: #3ecf8e; }
+    .veg-dot.veg::after { background: #3ecf8e; }
+    .veg-dot.nonveg { border-color: #e8442c; }
+    .veg-dot.nonveg::after { background: #e8442c; }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .tag-spicy {
+      font-size: 10px;
+      background: rgba(232,68,44,0.15);
+      color: #e8442c;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .tag-popular {
+      font-size: 10px;
+      background: rgba(245,166,35,0.15);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── CART BAR ────────────────────────────────────────── */
+    .cart-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .cart-bar.visible { transform: translateY(0); }
+
+    .cart-inner {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 30px rgba(245,166,35,0.4);
+    }
+
+    .cart-info { display: flex; flex-direction: column; }
+    .cart-count { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .cart-total { font-size: 20px; font-weight: 800; color: #fff; }
+
+    .cart-done-btn {
+      background: rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 10px;
+      padding: 10px 22px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+    }
+    .cart-done-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+
+    /* ─── ORDER SCREEN ────────────────────────────────────── */
+    .order-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 24px 40px;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .order-screen.open { transform: translateY(0); }
+
+    .order-screen-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    .order-screen h2 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      text-align: center;
+      animation: fadeUp 0.4s 0.1s both;
+    }
+
+    .order-screen p.subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 28px;
+      animation: fadeUp 0.4s 0.15s both;
+    }
+
+    .qr-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 40px rgba(245,166,35,0.3);
+      animation: popIn 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    .order-code-wrap {
+      background: var(--surface);
+      border: 1.5px dashed var(--border);
+      border-radius: 14px;
+      padding: 16px 24px;
+      text-align: center;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.4s 0.25s both;
+    }
+
+    .order-code-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .order-code {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 6px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .order-summary-mini {
+      width: 100%;
+      max-width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      animation: fadeUp 0.4s 0.3s both;
+    }
+
+    .order-summary-mini-title {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .order-row:last-child { border-bottom: none; }
+    .order-row-name { color: var(--text); font-weight: 500; flex: 1; }
+    .order-row-qty { color: var(--muted); font-size: 13px; margin: 0 12px; }
+    .order-row-price { color: var(--accent); font-weight: 700; }
+
+    .order-total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border-top: 1.5px solid var(--border);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .back-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 28px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+      animation: fadeUp 0.4s 0.35s both;
+      transition: all 0.2s;
+    }
+    .back-btn:active { transform: scale(0.97); }
+
+    /* ─── LOADING SHIMMER ─────────────────────────────────── */
+    .shimmer {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+
+    /* ─── ANIMATIONS ──────────────────────────────────────── */
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.6); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.3); }
+    }
+
+    .qty-bounce { animation: bounce 0.25s ease; }
+
+    /* ─── EMPTY STATE ─────────────────────────────────────── */
+    .empty-cat {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-cat .emoji { font-size: 48px; margin-bottom: 12px; }
+
+    /* ─── SCROLLBAR ───────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">🍽 Dine</div>
+    <div class="table-badge" id="tableBadge">Table —</div>
+  </div>
+  <div class="tagline">Browse, pick, and show the code to your waiter ✨</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<!-- MENU LIST -->
+<div class="menu-list" id="menuList"></div>
+
+<!-- CART BAR -->
+<div class="cart-bar" id="cartBar">
+  <div class="cart-inner">
+    <div class="cart-info">
+      <div class="cart-count" id="cartCount">0 items selected</div>
+      <div class="cart-total" id="cartTotal">₹0</div>
+    </div>
+    <button class="cart-done-btn" id="doneBtn">Done →</button>
+  </div>
+</div>
+
+<!-- ORDER SCREEN -->
+<div class="order-screen" id="orderScreen">
+  <div class="order-screen-icon">✅</div>
+  <h2>Your order is ready!</h2>
+  <p class="subtitle">Show this screen to your waiter or read out the code</p>
+  <div class="qr-box" id="qrBox"></div>
+  <div class="order-code-wrap">
+    <div class="order-code-label">Order Code</div>
+    <div class="order-code" id="orderCodeDisplay">——</div>
+  </div>
+  <div class="order-summary-mini" id="orderSummaryMini"></div>
+  <button class="back-btn" id="backBtn">← Back to Menu</button>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  MENU DATA
+// ─────────────────────────────────────────────
+const MENU = {
+  starters: {
+    label: 'Starters', emoji: '🔥',
+    items: [
+      { id:'s1', name:'Paneer Tikka',      emoji:'🧆', desc:'Grilled cottage cheese with spiced yoghurt marinade, served with mint chutney.',      price:220, veg:true,  popular:true,  spicy:false },
+      { id:'s2', name:'Chicken 65',        emoji:'🍗', desc:'Crispy deep-fried chicken tossed with curry leaves and fiery spices.',               price:260, veg:false, popular:true,  spicy:true  },
+      { id:'s3', name:'Crispy Corn',       emoji:'🌽', desc:'Golden sweet corn kernels tossed with herbs, butter and a squeeze of lemon.',         price:160, veg:true,  popular:false, spicy:false },
+      { id:'s4', name:'Veg Spring Rolls',  emoji:'🥢', desc:'Crispy golden rolls stuffed with seasoned vegetables and glass noodles.',             price:180, veg:true,  popular:false, spicy:false },
+      { id:'s5', name:'Prawn Koliwada',    emoji:'🦐', desc:'Juicy prawns in a spiced batter, deep fried to golden perfection.',                  price:340, veg:false, popular:false, spicy:true  },
+    ]
+  },
+  mains: {
+    label: 'Mains', emoji: '🍛',
+    items: [
+      { id:'m1', name:'Butter Chicken',    emoji:'🍲', desc:'Tender chicken simmered in a rich, creamy tomato-based curry with aromatic spices.',  price:320, veg:false, popular:true,  spicy:false },
+      { id:'m2', name:'Dal Makhani',       emoji:'🫕', desc:'Black lentils slow-cooked overnight with butter, cream and a blend of spices.',       price:240, veg:true,  popular:true,  spicy:false },
+      { id:'m3', name:'Mutton Rogan Josh', emoji:'🥩', desc:'Succulent mutton braised in a bold Kashmiri spice gravy.',                           price:420, veg:false, popular:false, spicy:true  },
+      { id:'m4', name:'Palak Paneer',      emoji:'🥬', desc:'Fresh cottage cheese cubes in a smooth, spiced spinach gravy.',                       price:260, veg:true,  popular:false, spicy:false },
+      { id:'m5', name:'Hyderabadi Biryani',emoji:'🍚', desc:'Fragrant basmati rice layered with spiced meat, saffron and caramelised onions.',     price:380, veg:false, popular:true,  spicy:true  },
+      { id:'m6', name:'Veg Biryani',       emoji:'🌾', desc:'Aromatic basmati rice cooked with seasonal vegetables and whole spices.',             price:280, veg:true,  popular:false, spicy:false },
+    ]
+  },
+  breads: {
+    label: 'Breads', emoji: '🫓',
+    items: [
+      { id:'b1', name:'Butter Naan',       emoji:'🫓', desc:'Soft leavened bread cooked in a tandoor, generously brushed with butter.',            price:60,  veg:true,  popular:true,  spicy:false },
+      { id:'b2', name:'Garlic Naan',       emoji:'🧄', desc:'Tandoor naan topped with fresh garlic and coriander.',                               price:70,  veg:true,  popular:true,  spicy:false },
+      { id:'b3', name:'Lachha Paratha',    emoji:'🫓', desc:'Flaky layered whole-wheat paratha cooked on the griddle.',                           price:65,  veg:true,  popular:false, spicy:false },
+      { id:'b4', name:'Peshwari Naan',     emoji:'🍯', desc:'Sweet naan stuffed with coconut, almond and sultana filling.',                       price:90,  veg:true,  popular:false, spicy:false },
+    ]
+  },
+  desserts: {
+    label: 'Desserts', emoji: '🍮',
+    items: [
+      { id:'d1', name:'Gulab Jamun',       emoji:'🍮', desc:'Soft milk-solid dumplings soaked in rose-scented sugar syrup, served warm.',          price:120, veg:true,  popular:true,  spicy:false },
+      { id:'d2', name:'Chocolate Lava Cake',emoji:'🍫', desc:'Warm chocolate cake with a molten centre, served with vanilla ice cream.',           price:180, veg:true,  popular:true,  spicy:false },
+      { id:'d3', name:'Kulfi Falooda',     emoji:'🍧', desc:'Traditional Indian ice cream served with vermicelli, basil seeds and rose syrup.',    price:150, veg:true,  popular:false, spicy:false },
+      { id:'d4', name:'Rasgulla',          emoji:'⚪', desc:'Spongy cottage cheese balls simmered in light sugar syrup.',                         price:100, veg:true,  popular:false, spicy:false },
+    ]
+  },
+  drinks: {
+    label: 'Drinks', emoji: '🥤',
+    items: [
+      { id:'dr1', name:'Mango Lassi',      emoji:'🥭', desc:'Chilled thick yoghurt blended with ripe Alphonso mangoes and a hint of cardamom.',   price:110, veg:true,  popular:true,  spicy:false },
+      { id:'dr2', name:'Masala Chaas',     emoji:'🫙', desc:'Spiced buttermilk with roasted cumin, ginger and fresh coriander.',                  price:80,  veg:true,  popular:false, spicy:false },
+      { id:'dr3', name:'Fresh Lime Soda',  emoji:'🍋', desc:'Freshly squeezed lime with sparkling water — choose sweet, salted or masala.',       price:90,  veg:true,  popular:false, spicy:false },
+      { id:'dr4', name:'Masala Chai',      emoji:'☕', desc:'Aromatic spiced tea brewed with ginger, cardamom and fresh milk.',                   price:70,  veg:true,  popular:true,  spicy:false },
+      { id:'dr5', name:'Cold Coffee',      emoji:'🧋', desc:'Creamy blended cold coffee topped with whipped cream.',                              price:130, veg:true,  popular:false, spicy:false },
+    ]
+  }
+};
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+const cart = {};        // { itemId: qty }
+let activeCategory = 'starters';
+
+// ─────────────────────────────────────────────
+//  TABLE NUMBER FROM URL
+// ─────────────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+const tableNum  = urlParams.get('table') || '?';
+document.getElementById('tableBadge').textContent = `Table ${tableNum}`;
+
+// ─────────────────────────────────────────────
+//  RENDER TABS
+// ─────────────────────────────────────────────
+const tabsEl = document.getElementById('tabs');
+Object.keys(MENU).forEach(key => {
+  const cat = MENU[key];
+  const btn = document.createElement('button');
+  btn.className = 'tab' + (key === activeCategory ? ' active' : '');
+  btn.textContent = `${cat.emoji} ${cat.label}`;
+  btn.id = `tab-${key}`;
+  btn.addEventListener('click', () => switchCategory(key));
+  tabsEl.appendChild(btn);
+});
+
+// ─────────────────────────────────────────────
+//  RENDER MENU
+// ─────────────────────────────────────────────
+function renderMenu() {
+  const listEl = document.getElementById('menuList');
+  listEl.innerHTML = '';
+
+  const cat = MENU[activeCategory];
+  cat.items.forEach(item => {
+    const qty = cart[item.id] || 0;
+    const card = document.createElement('div');
+    card.className = 'card' + (qty > 0 ? ' has-items' : '');
+    card.id = `card-${item.id}`;
+
+    card.innerHTML = `
+      <div class="card-img">${item.emoji}</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <div class="veg-dot ${item.veg ? 'veg' : 'nonveg'}"></div>
+          ${item.popular ? '<span class="tag-popular">Popular</span>' : ''}
+          ${item.spicy   ? '<span class="tag-spicy">🌶 Spicy</span>'  : ''}
+        </div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-footer">
+          <div class="card-price">₹${item.price}</div>
+          <div class="qty-ctrl">
+            <button class="qty-btn minus" onclick="changeQty('${item.id}', -1, event)" ${qty===0?'style="opacity:0.3;pointer-events:none"':''}>−</button>
+            <span class="qty-num" id="qty-${item.id}">${qty}</span>
+            <button class="qty-btn plus"  onclick="changeQty('${item.id}',  1, event)">+</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    listEl.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────────────────
+//  SWITCH CATEGORY
+// ─────────────────────────────────────────────
+function switchCategory(key) {
+  activeCategory = key;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${key}`).classList.add('active');
+  renderMenu();
+
+  // Scroll tab into view
+  document.getElementById(`tab-${key}`).scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+}
+
+// ─────────────────────────────────────────────
+//  CHANGE QUANTITY
+// ─────────────────────────────────────────────
+function changeQty(id, delta, e) {
+  e.stopPropagation();
+  cart[id] = Math.max(0, (cart[id] || 0) + delta);
+  if (cart[id] === 0) delete cart[id];
+
+  // Update qty display inline (no full re-render for smoothness)
+  const qtyEl = document.getElementById(`qty-${id}`);
+  if (qtyEl) {
+    qtyEl.textContent = cart[id] || 0;
+    qtyEl.classList.remove('qty-bounce');
+    void qtyEl.offsetWidth; // reflow
+    qtyEl.classList.add('qty-bounce');
+  }
+
+  // Update card border
+  const cardEl = document.getElementById(`card-${id}`);
+  if (cardEl) {
+    cardEl.classList.toggle('has-items', (cart[id] || 0) > 0);
+  }
+
+  // Update minus button visibility
+  const minusBtn = cardEl?.querySelector('.qty-btn.minus');
+  if (minusBtn) {
+    minusBtn.style.opacity = (cart[id] || 0) === 0 ? '0.3' : '1';
+    minusBtn.style.pointerEvents = (cart[id] || 0) === 0 ? 'none' : 'auto';
+  }
+
+  updateCartBar();
+}
+
+// ─────────────────────────────────────────────
+//  UPDATE CART BAR
+// ─────────────────────────────────────────────
+function updateCartBar() {
+  const ids   = Object.keys(cart);
+  const total = ids.reduce((sum, id) => {
+    const item = findItem(id);
+    return sum + (item ? item.price * cart[id] : 0);
+  }, 0);
+  const count = ids.reduce((sum, id) => sum + cart[id], 0);
+
+  document.getElementById('cartCount').textContent = `${count} item${count !== 1 ? 's' : ''} selected`;
+  document.getElementById('cartTotal').textContent  = `₹${total}`;
+  document.getElementById('cartBar').classList.toggle('visible', count > 0);
+}
+
+function findItem(id) {
+  for (const catKey of Object.keys(MENU)) {
+    const found = MENU[catKey].items.find(i => i.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+//  DONE BUTTON — SHOW ORDER SCREEN
+// ─────────────────────────────────────────────
+document.getElementById('doneBtn').addEventListener('click', showOrderScreen);
+
+function showOrderScreen() {
+  // Build order payload
+  const orderItems = Object.keys(cart).map(id => {
+    const item = findItem(id);
+    return { id, name: item.name, qty: cart[id], price: item.price };
+  });
+
+  const payload = {
+    t:  tableNum,
+    ts: Date.now(),
+    it: orderItems.map(i => ({ i: i.id, n: i.name, q: i.qty, p: i.price }))
+  };
+
+  const encoded = btoa(JSON.stringify(payload));
+
+  // Generate 6-char code from encoded string (last 6 chars, uppercase)
+  const shortCode = encoded.replace(/[^A-Za-z0-9]/g,'').slice(-6).toUpperCase();
+
+  document.getElementById('orderCodeDisplay').textContent = shortCode;
+
+  // Generate QR code (encode shortcode + table info)
+  const qrData = JSON.stringify({ code: shortCode, order: payload });
+  document.getElementById('qrBox').innerHTML = '';
+  new QRCode(document.getElementById('qrBox'), {
+    text: qrData,
+    width: 200,
+    height: 200,
+    colorDark: '#1a1a1a',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  // Render order summary
+  renderOrderSummary(orderItems);
+
+  // Show screen
+  document.getElementById('orderScreen').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderOrderSummary(orderItems) {
+  const container = document.getElementById('orderSummaryMini');
+  const total = orderItems.reduce((s, i) => s + i.price * i.qty, 0);
+
+  container.innerHTML = `
+    <div class="order-summary-mini-title">🧾 Your Order</div>
+    ${orderItems.map(i => `
+      <div class="order-row">
+        <span class="order-row-name">${i.name}</span>
+        <span class="order-row-qty">×${i.qty}</span>
+        <span class="order-row-price">₹${i.price * i.qty}</span>
+      </div>
+    `).join('')}
+    <div class="order-total-row">
+      <span>Total</span>
+      <span style="color:var(--accent)">₹${total}</span>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+//  BACK BUTTON
+// ─────────────────────────────────────────────
+document.getElementById('backBtn').addEventListener('click', () => {
+  document.getElementById('orderScreen').classList.remove('open');
+  document.body.style.overflow = '';
+});
+
+// ─────────────────────────────────────────────
+//  INITIAL RENDER
+// ─────────────────────────────────────────────
+renderMenu();
+</script>
+</body>
+</html>
