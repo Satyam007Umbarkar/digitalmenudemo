@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Hotel Pahunchar – Pure Veg Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- QR Scanner library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --saffron:       #E8661A;
+      --saffron-dark:  #C14F0E;
+      --saffron-light: #F9E4CF;
+      --gold:          #D4920A;
+      --gold-light:    #FDF3DC;
+      --cream:         #FDF8F2;
+      --brown:         #5C3A1E;
+      --brown-light:   #8B5E3C;
+      --text:          #2C1A0E;
+      --text-muted:    #7A5C44;
+      --border:        rgba(92,58,30,0.12);
+      --white:         #FFFFFF;
+      --green:         #3B6D11;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ══════════════════════════════
+       CUSTOMER MENU PAGE
+    ══════════════════════════════ */
+
+    /* HEADER */
+    .header {
+      background: var(--saffron);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.07) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .header-border-top {
+      height: 6px;
+      background: repeating-linear-gradient(90deg, var(--gold) 0px, var(--gold) 12px, var(--saffron-dark) 12px, var(--saffron-dark) 24px);
+    }
+    .header-content {
+      padding: 1.4rem 1rem 1.6rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hotel-label { font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 6px; }
+    .hotel-name { font-family: 'Libre Baskerville', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.15; }
+    .hotel-name span { display: block; font-size: 13px; font-weight: 400; font-style: italic; letter-spacing: 0.5px; margin-top: 4px; color: rgba(255,255,255,0.9); }
+    .header-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 8px; }
+    .header-divider .line { height: 1px; width: 50px; background: rgba(255,255,255,0.35); }
+    .header-divider .diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
+    .header-meta { display: flex; justify-content: center; gap: 20px; }
+    .meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: rgba(255,255,255,0.88); }
+    .meta-item svg { width: 13px; height: 13px; fill: rgba(255,255,255,0.7); }
+    .header-border-bottom { height: 5px; background: repeating-linear-gradient(90deg, var(--gold) 0px, var(--gold) 8px, transparent 8px, transparent 16px); opacity: 0.6; }
+
+    /* VEG BANNER */
+    .veg-banner { background: var(--gold-light); border-bottom: 1px solid rgba(212,146,10,0.2); padding: 7px 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .veg-logo { width: 16px; height: 16px; border: 1.5px solid var(--green); border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .veg-logo-inner { width: 7px; height: 7px; background: var(--green); border-radius: 50%; }
+    .veg-banner p { font-size: 12px; color: #5C4A00; font-weight: 500; letter-spacing: 0.3px; }
+
+    /* TABS */
+    .cats-wrap { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .cats { display: flex; overflow-x: auto; padding: 0 0.75rem; scrollbar-width: none; }
+    .cats::-webkit-scrollbar { display: none; }
+    .cat-btn { padding: 12px 14px; border: none; border-bottom: 2.5px solid transparent; background: transparent; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+    .cat-btn.active { color: var(--saffron); border-bottom-color: var(--saffron); font-weight: 500; }
+    .cat-btn .cat-icon { font-size: 14px; }
+
+    /* SECTIONS */
+    .section { padding: 0 0 1rem; }
+    .section-header { display: flex; align-items: center; gap: 10px; padding: 1.1rem 1rem 0.6rem; }
+    .section-icon { width: 32px; height: 32px; background: var(--saffron-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .section-title { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 700; color: var(--brown); }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* ITEM CARDS */
+    .items { padding: 0 1rem; display: flex; flex-direction: column; gap: 8px; }
+    .item-card { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 12px 14px; display: flex; align-items: center; gap: 12px; animation: fadeUp 0.3s ease both; transition: border-color 0.2s, box-shadow 0.2s; }
+    .item-card.in-cart { border-color: var(--saffron); box-shadow: 0 0 0 1px var(--saffron-light); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .item-emoji { width: 48px; height: 48px; border-radius: 10px; background: var(--saffron-light); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .item-body { flex: 1; min-width: 0; }
+    .item-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .item-name { font-size: 14px; font-weight: 500; color: var(--text); }
+    .badge-popular { font-size: 9px; font-weight: 500; background: var(--gold-light); color: #7A5000; padding: 2px 7px; border-radius: 20px; border: 1px solid rgba(212,146,10,0.25); }
+    .badge-spicy { font-size: 9px; font-weight: 500; background: #FDEEE9; color: #8B2A10; padding: 2px 7px; border-radius: 20px; border: 1px solid rgba(232,102,26,0.2); }
+    .item-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+    .item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .item-price { font-family: 'Libre Baskerville', serif; font-size: 15px; font-weight: 700; color: var(--saffron-dark); }
+    .veg-dot-wrap { display: flex; align-items: center; }
+    .veg-dot { width: 13px; height: 13px; border: 1.5px solid var(--green); border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+    .veg-dot-inner { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+
+    /* QTY CONTROLS */
+    .qty-ctrl { display: flex; align-items: center; gap: 0; background: var(--saffron-light); border-radius: 8px; overflow: hidden; }
+    .qty-btn { width: 28px; height: 28px; border: none; background: transparent; cursor: pointer; font-size: 16px; font-weight: 600; color: var(--saffron-dark); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .qty-btn:active { background: rgba(232,102,26,0.2); }
+    .qty-num { font-size: 13px; font-weight: 600; color: var(--text); min-width: 20px; text-align: center; }
+    .add-btn { padding: 5px 12px; background: var(--saffron); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+    .add-btn:active { background: var(--saffron-dark); }
+
+    /* SPECIAL CARD */
+    .special-card { margin: 0.5rem 1rem; background: linear-gradient(135deg, #E8661A 0%, #C14F0E 100%); border-radius: 14px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: transform 0.15s; }
+    .special-card:active { transform: scale(0.98); }
+    .special-emoji { font-size: 32px; }
+    .special-text h3 { font-family: 'Libre Baskerville', serif; color: #fff; font-size: 15px; font-weight: 700; }
+    .special-text p { color: rgba(255,255,255,0.85); font-size: 12px; margin-top: 3px; }
+    .special-price { margin-left: auto; text-align: right; flex-shrink: 0; }
+    .special-price .old { font-size: 11px; color: rgba(255,255,255,0.6); text-decoration: line-through; }
+    .special-price .new { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 700; color: #FFE082; }
+
+    /* FLOATING CART BAR */
+    .cart-bar {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      background: var(--brown);
+      padding: 12px 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 200;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: translateX(-50%) translateY(100%);
+      opacity: 0;
+    }
+    .cart-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .cart-bar-left { display: flex; align-items: center; gap: 10px; }
+    .cart-count-badge { background: var(--saffron); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+    .cart-summary { color: white; }
+    .cart-summary .cart-items-text { font-size: 12px; color: rgba(255,255,255,0.7); }
+    .cart-summary .cart-total { font-family: 'Libre Baskerville', serif; font-size: 16px; font-weight: 700; color: #FFE082; }
+    .cart-done-btn { background: var(--saffron); color: white; border: none; border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.15s; }
+    .cart-done-btn:active { background: var(--saffron-dark); }
+
+    /* FOOTER */
+    .footer { margin: 1.5rem 1rem 6rem; background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .footer-header { background: var(--saffron-light); padding: 10px 1rem; text-align: center; }
+    .footer-header p { font-family: 'Libre Baskerville', serif; font-size: 13px; color: var(--brown); font-style: italic; }
+    .footer-body { padding: 1rem; }
+    .footer-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+    .footer-row:last-child { border-bottom: none; }
+    .footer-row svg { width: 16px; height: 16px; fill: var(--saffron); flex-shrink: 0; margin-top: 1px; }
+    .footer-row a { color: var(--saffron-dark); text-decoration: none; font-weight: 500; }
+    .footer-credit { text-align: center; padding: 10px; font-size: 11px; color: var(--text-muted); background: var(--cream); border-top: 1px solid var(--border); }
+    .footer-credit a { color: var(--saffron); text-decoration: none; }
+
+    /* ══════════════════════════════
+       ORDER QR PAGE (customer)
+    ══════════════════════════════ */
+    .order-page {
+      min-height: 100vh;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+    }
+    .order-header {
+      background: var(--saffron);
+      padding: 1.2rem 1rem;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .order-header-back {
+      width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.2);
+      border: none; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .order-header h2 { font-family: 'Libre Baskerville', serif; color: white; font-size: 18px; }
+    .order-body { padding: 1.5rem 1rem; flex: 1; }
+
+    .order-code-box {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .order-code-label { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .order-code-big { font-family: 'Libre Baskerville', serif; font-size: 36px; font-weight: 700; color: var(--saffron-dark); letter-spacing: 4px; margin-bottom: 4px; }
+    .order-code-hint { font-size: 12px; color: var(--text-muted); }
+
+    .qr-box {
+      background: var(--white);
+      border-radius: 16px;
+      border: 2px dashed var(--saffron-light);
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .qr-box p { font-size: 12px; color: var(--text-muted); margin-top: 12px; }
+    #qrcode { display: flex; justify-content: center; }
+    #qrcode canvas, #qrcode img { border-radius: 8px; }
+
+    .order-items-box {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .order-items-title {
+      background: var(--saffron-light);
+      padding: 10px 1rem;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 14px;
+      color: var(--brown);
+      font-weight: 700;
+    }
+    .order-item-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .order-item-name { color: var(--text); font-weight: 500; }
+    .order-item-qty { color: var(--text-muted); font-size: 12px; }
+    .order-item-price { font-family: 'Libre Baskerville', serif; font-weight: 700; color: var(--saffron-dark); }
+    .order-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 1rem;
+      background: var(--gold-light);
+      border-top: 2px solid rgba(212,146,10,0.2);
+    }
+    .order-total-label { font-weight: 600; color: var(--brown); }
+    .order-total-amt { font-family: 'Libre Baskerville', serif; font-size: 18px; font-weight: 700; color: var(--saffron-dark); }
+
+    .waiting-msg {
+      text-align: center;
+      padding: 1rem;
+      background: var(--gold-light);
+      border-radius: 12px;
+      border: 1px solid rgba(212,146,10,0.2);
+      margin-bottom: 1rem;
+    }
+    .waiting-msg .wave { font-size: 24px; animation: wave 1.5s infinite; display: inline-block; }
+    @keyframes wave { 0%,100%{transform:rotate(0)} 25%{transform:rotate(15deg)} 75%{transform:rotate(-15deg)} }
+    .waiting-msg p { margin-top: 6px; font-size: 13px; color: var(--brown); }
+
+    /* RECEIVED CONFIRMATION */
+    .received-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .received-overlay.show { opacity: 1; pointer-events: all; }
+    .received-card {
+      background: white; border-radius: 20px; padding: 2rem 1.5rem;
+      max-width: 300px; width: 90%; text-align: center;
+      transform: scale(0.8); transition: transform 0.3s;
+    }
+    .received-overlay.show .received-card { transform: scale(1); }
+    .received-icon { font-size: 56px; margin-bottom: 1rem; }
+    .received-card h2 { font-family: 'Libre Baskerville', serif; color: var(--green); font-size: 22px; margin-bottom: 8px; }
+    .received-card p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+    .received-card .order-ref { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 700; color: var(--saffron-dark); margin: 10px 0; }
+    .received-new-btn { margin-top: 1.2rem; width: 100%; padding: 12px; background: var(--saffron); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; }
+
+    /* ══════════════════════════════
+       WAITER PAGE
+    ══════════════════════════════ */
+    .waiter-page {
+      min-height: 100vh;
+      background: #1A0E06;
+    }
+    .waiter-header {
+      background: linear-gradient(135deg, var(--saffron-dark), var(--brown));
+      padding: 1.2rem 1rem 1rem;
+      text-align: center;
+      position: relative;
+    }
+    .waiter-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.15); border-radius: 20px;
+      padding: 4px 12px; margin-bottom: 8px;
+    }
+    .waiter-badge span { font-size: 11px; color: rgba(255,255,255,0.9); letter-spacing: 2px; text-transform: uppercase; }
+    .waiter-header h1 { font-family: 'Libre Baskerville', serif; color: white; font-size: 22px; }
+    .waiter-header p { color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 4px; }
+
+    .waiter-body { padding: 1.2rem 1rem; }
+
+    /* SCAN / TYPE TABS */
+    .w-tabs { display: flex; background: rgba(255,255,255,0.07); border-radius: 12px; padding: 4px; margin-bottom: 1.2rem; }
+    .w-tab { flex: 1; padding: 10px; border: none; background: transparent; color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; border-radius: 9px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .w-tab.active { background: var(--saffron); color: white; }
+
+    /* SCAN AREA */
+    .scan-area {
+      background: rgba(255,255,255,0.05);
+      border: 2px dashed rgba(232,102,26,0.4);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    #scanner-video { width: 100%; border-radius: 10px; display: none; }
+    #scanner-canvas { display: none; }
+    .scan-placeholder { padding: 2rem 0; }
+    .scan-placeholder .scan-icon { font-size: 48px; margin-bottom: 12px; }
+    .scan-placeholder p { color: rgba(255,255,255,0.5); font-size: 13px; }
+    .scan-start-btn {
+      margin-top: 1rem; padding: 12px 28px;
+      background: var(--saffron); color: white; border: none;
+      border-radius: 10px; font-size: 14px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+    }
+    .scan-stop-btn {
+      margin-top: 1rem; padding: 10px 24px;
+      background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px; font-size: 13px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; display: none;
+    }
+
+    /* MANUAL CODE INPUT */
+    .manual-area {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .manual-area label { display: block; font-size: 12px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+    .code-input-wrap { display: flex; gap: 8px; }
+    .code-input {
+      flex: 1; padding: 12px 14px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px; color: white; font-size: 18px; font-weight: 700;
+      font-family: 'Libre Baskerville', serif; letter-spacing: 3px;
+      text-transform: uppercase; outline: none; text-align: center;
+    }
+    .code-input::placeholder { color: rgba(255,255,255,0.3); letter-spacing: 1px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-style: italic; }
+    .code-input:focus { border-color: var(--saffron); background: rgba(232,102,26,0.1); }
+    .code-submit-btn {
+      padding: 12px 18px; background: var(--saffron); color: white;
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; white-space: nowrap;
+    }
+
+    /* WAITER ORDER RESULT */
+    .w-order-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .w-order-card.show { display: block; animation: fadeUp 0.3s ease; }
+    .w-order-top {
+      background: linear-gradient(135deg, rgba(232,102,26,0.3), rgba(92,58,30,0.3));
+      padding: 14px 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .w-order-code { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 700; color: #FFE082; letter-spacing: 3px; }
+    .w-order-time { font-size: 11px; color: rgba(255,255,255,0.6); }
+    .w-order-items { padding: 0.5rem 0; }
+    .w-order-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .w-order-item:last-child { border-bottom: none; }
+    .w-item-left { display: flex; align-items: center; gap: 10px; }
+    .w-item-emoji { font-size: 20px; }
+    .w-item-name { color: white; font-size: 14px; font-weight: 500; }
+    .w-item-qty { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+    .w-item-price { font-family: 'Libre Baskerville', serif; font-size: 14px; font-weight: 700; color: #FFE082; }
+    .w-order-total {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 1rem;
+      background: rgba(212,146,10,0.15);
+      border-top: 1px solid rgba(212,146,10,0.3);
+    }
+    .w-total-label { color: rgba(255,255,255,0.8); font-weight: 600; font-size: 14px; }
+    .w-total-amt { font-family: 'Libre Baskerville', serif; font-size: 20px; font-weight: 700; color: #FFE082; }
+
+    .w-confirm-btn {
+      width: 100%; padding: 14px;
+      background: var(--green); color: white; border: none;
+      border-radius: 12px; font-size: 16px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s; margin-bottom: 1rem;
+    }
+    .w-confirm-btn:active { background: #2d5209; }
+    .w-confirm-btn.confirmed { background: #5a9e2f; pointer-events: none; }
+
+    .w-error {
+      background: rgba(220,50,30,0.15); border: 1px solid rgba(220,50,30,0.3);
+      border-radius: 12px; padding: 1rem; text-align: center;
+      color: #FF8A80; font-size: 13px; margin-bottom: 1rem; display: none;
+    }
+    .w-error.show { display: block; animation: fadeUp 0.3s ease; }
+
+    .waiter-hint {
+      text-align: center; padding: 1rem;
+      color: rgba(255,255,255,0.3); font-size: 12px; line-height: 1.6;
+    }
+
+    /* SCAN RESULT FLASH */
+    .scan-flash {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: var(--green); color: white; padding: 10px 20px;
+      border-radius: 30px; font-size: 13px; font-weight: 600;
+      z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+      white-space: nowrap;
+    }
+    .scan-flash.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════
+       PAGE 1 — CUSTOMER MENU
+  ══════════════════════════ -->
+  <div id="page-menu" class="page active">
+
+    <div class="header">
+      <div class="header-border-top"></div>
+      <div class="header-pattern"></div>
+      <div class="header-content">
+        <p class="hotel-label">Welcome to</p>
+        <h1 class="hotel-name">Hotel Pahunchar<span>Pure Vegetarian Restaurant</span></h1>
+        <div class="header-divider"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
+        <div class="header-meta">
+          <div class="meta-item">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+            7:00 AM – 10:30 PM
+          </div>
+          <div class="meta-item">
+            <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.47 11.47 0 003.58.57 1 1 0 011 1v3.5a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.02l-2.2 2.19z"/></svg>
+            98765 43210
+          </div>
+        </div>
+      </div>
+      <div class="header-border-bottom"></div>
+    </div>
+
+    <div class="veg-banner">
+      <div class="veg-logo"><div class="veg-logo-inner"></div></div>
+      <p>100% Pure Vegetarian &bull; No Onion No Garlic options available</p>
+    </div>
+
+    <div class="cats-wrap">
+      <div class="cats">
+        <button class="cat-btn active" onclick="filter('all',this)"><span class="cat-icon">🍽</span> All</button>
+        <button class="cat-btn" onclick="filter('breakfast',this)"><span class="cat-icon">🌅</span> Breakfast</button>
+        <button class="cat-btn" onclick="filter('thali',this)"><span class="cat-icon">🍱</span> Thali</button>
+        <button class="cat-btn" onclick="filter('roti',this)"><span class="cat-icon">🫓</span> Roti &amp; Rice</button>
+        <button class="cat-btn" onclick="filter('snacks',this)"><span class="cat-icon">🥙</span> Snacks</button>
+        <button class="cat-btn" onclick="filter('sweets',this)"><span class="cat-icon">🍮</span> Sweets</button>
+        <button class="cat-btn" onclick="filter('drinks',this)"><span class="cat-icon">🥤</span> Drinks</button>
+      </div>
+    </div>
+
+    <!-- TODAY'S SPECIAL -->
+    <div class="cat-section" data-cat="all" id="special-section" style="padding-top:0.8rem;">
+      <div class="special-card" onclick="addSpecial()">
+        <div class="special-emoji">🍛</div>
+        <div class="special-text">
+          <h3>Today's Special Thali</h3>
+          <p>Dal, 3 sabzi, roti, rice, salad, papad, chaas</p>
+        </div>
+        <div class="special-price">
+          <div class="old">₹160</div>
+          <div class="new">₹130</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREAKFAST -->
+    <div class="section cat-section" data-cat="breakfast">
+      <div class="section-header"><div class="section-icon">🌅</div><h2 class="section-title">Breakfast</h2><div class="section-line"></div></div>
+      <div class="items" id="items-breakfast">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+
+    <!-- THALI -->
+    <div class="section cat-section" data-cat="thali">
+      <div class="section-header"><div class="section-icon">🍱</div><h2 class="section-title">Thali</h2><div class="section-line"></div></div>
+      <div class="items" id="items-thali"></div>
+    </div>
+
+    <!-- ROTI & RICE -->
+    <div class="section cat-section" data-cat="roti">
+      <div class="section-header"><div class="section-icon">🫓</div><h2 class="section-title">Roti &amp; Rice</h2><div class="section-line"></div></div>
+      <div class="items" id="items-roti"></div>
+    </div>
+
+    <!-- SNACKS -->
+    <div class="section cat-section" data-cat="snacks">
+      <div class="section-header"><div class="section-icon">🥙</div><h2 class="section-title">Snacks</h2><div class="section-line"></div></div>
+      <div class="items" id="items-snacks"></div>
+    </div>
+
+    <!-- SWEETS -->
+    <div class="section cat-section" data-cat="sweets">
+      <div class="section-header"><div class="section-icon">🍮</div><h2 class="section-title">Sweets &amp; Desserts</h2><div class="section-line"></div></div>
+      <div class="items" id="items-sweets"></div>
+    </div>
+
+    <!-- DRINKS -->
+    <div class="section cat-section" data-cat="drinks">
+      <div class="section-header"><div class="section-icon">🥤</div><h2 class="section-title">Drinks</h2><div class="section-line"></div></div>
+      <div class="items" id="items-drinks"></div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-header"><p>"Athithi Devo Bhava – Guest is God"</p></div>
+      <div class="footer-body">
+        <div class="footer-row">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+          Main Road, Near Temple, Vaijāpur
+        </div>
+        <div class="footer-row">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.47 11.47 0 003.58.57 1 1 0 011 1v3.5a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.47 11.47 0 00.57 3.58 1 1 0 01-.25 1.02l-2.2 2.19z"/></svg>
+          <a href="tel:9876543210">98765 43210</a>
+        </div>
+        <div class="footer-row">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+          Open daily 7:00 AM – 10:30 PM
+        </div>
+      </div>
+      <div class="footer-credit">Digital menu by <a href="#">YourName Digital Services</a></div>
+    </div>
+
+    <!-- FLOATING CART BAR -->
+    <div class="cart-bar" id="cart-bar">
+      <div class="cart-bar-left">
+        <div class="cart-count-badge" id="cart-count">0</div>
+        <div class="cart-summary">
+          <div class="cart-items-text" id="cart-items-text">items selected</div>
+          <div class="cart-total" id="cart-total-display">₹0</div>
+        </div>
+      </div>
+      <button class="cart-done-btn" onclick="showOrderPage()">Done ✓</button>
+    </div>
+
+  </div><!-- /page-menu -->
+
+
+  <!-- ══════════════════════════
+       PAGE 2 — ORDER QR (customer sees after "Done")
+  ══════════════════════════ -->
+  <div id="page-order" class="page">
+    <div class="order-page">
+      <div class="order-header">
+        <button class="order-header-back" onclick="goBack()">←</button>
+        <h2>Your Order</h2>
+      </div>
+      <div class="order-body">
+
+        <div class="order-code-box">
+          <div class="order-code-label">Show this code to waiter</div>
+          <div class="order-code-big" id="display-code">---</div>
+          <div class="order-code-hint">or let them scan the QR below</div>
+        </div>
+
+        <div class="qr-box">
+          <div id="qrcode"></div>
+          <p>Waiter scans this with their phone</p>
+        </div>
+
+        <div class="order-items-box">
+          <div class="order-items-title">🛒 Your Items</div>
+          <div id="order-items-list"></div>
+          <div class="order-total-row">
+            <span class="order-total-label">Total</span>
+            <span class="order-total-amt" id="order-total">₹0</span>
+          </div>
+        </div>
+
+        <div class="waiting-msg">
+          <div class="wave">🙏</div>
+          <p>Waiting for waiter to confirm your order...</p>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /page-order -->
+
+
+  <!-- ══════════════════════════
+       PAGE 3 — WAITER APP
+  ══════════════════════════ -->
+  <div id="page-waiter" class="page">
+    <div class="waiter-page">
+
+      <div class="waiter-header">
+        <div class="waiter-badge"><span>🍽 Waiter Panel</span></div>
+        <h1>Hotel Pahunchar</h1>
+        <p>Scan or enter customer order code</p>
+      </div>
+
+      <div class="waiter-body">
+
+        <!-- Tabs: Scan / Type -->
+        <div class="w-tabs">
+          <button class="w-tab active" id="tab-scan" onclick="switchWaiterTab('scan')">📷 Scan QR</button>
+          <button class="w-tab" id="tab-type" onclick="switchWaiterTab('type')">⌨️ Enter Code</button>
+        </div>
+
+        <!-- SCAN PANEL -->
+        <div id="waiter-scan-panel">
+          <div class="scan-area">
+            <video id="scanner-video" autoplay playsinline></video>
+            <canvas id="scanner-canvas"></canvas>
+            <div class="scan-placeholder" id="scan-placeholder">
+              <div class="scan-icon">📷</div>
+              <p>Tap below to open camera<br>and scan customer's QR code</p>
+              <button class="scan-start-btn" onclick="startScan()">Start Camera</button>
+            </div>
+            <button class="scan-stop-btn" id="scan-stop-btn" onclick="stopScan()">✕ Stop Camera</button>
+          </div>
+        </div>
+
+        <!-- TYPE PANEL -->
+        <div id="waiter-type-panel" style="display:none;">
+          <div class="manual-area">
+            <label>Customer Order Code</label>
+            <div class="code-input-wrap">
+              <input class="code-input" id="code-input" placeholder="e.g. PAH-47" maxlength="7" oninput="this.value=this.value.toUpperCase()">
+              <button class="code-submit-btn" onclick="lookupCode()">Get Order</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ERROR -->
+        <div class="w-error" id="w-error">❌ Code not found. Ask customer to show their screen again.</div>
+
+        <!-- ORDER RESULT -->
+        <div class="w-order-card" id="w-order-card">
+          <div class="w-order-top">
+            <div class="w-order-code" id="w-order-code-display">---</div>
+            <div class="w-order-time" id="w-order-time">--:--</div>
+          </div>
+          <div class="w-order-items" id="w-order-items-list"></div>
+          <div class="w-order-total">
+            <span class="w-total-label">Total Amount</span>
+            <span class="w-total-amt" id="w-order-total">₹0</span>
+          </div>
+        </div>
+
+        <button class="w-confirm-btn" id="w-confirm-btn" style="display:none;" onclick="confirmOrder()">
+          ✓ Order Received — Confirmed
+        </button>
+
+        <div class="waiter-hint">
+          Each waiter works independently.<br>
+          10 waiters can scan different orders at the same time.
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /page-waiter -->
+
+
+  <!-- ORDER RECEIVED OVERLAY (customer) -->
+  <div class="received-overlay" id="received-overlay">
+    <div class="received-card">
+      <div class="received-icon">✅</div>
+      <h2>Order Received!</h2>
+      <p>Your waiter has confirmed:</p>
+      <div class="order-ref" id="received-ref">---</div>
+      <p>Your food will be served shortly. 🙏</p>
+      <button class="received-new-btn" onclick="resetAll()">New Order</button>
+    </div>
+  </div>
+
+  <!-- SCAN FLASH -->
+  <div class="scan-flash" id="scan-flash">✓ QR Scanned!</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   MENU DATA
+══════════════════════════════════════════════ */
+const MENU = {
+  breakfast: [
+    { id:'b1', emoji:'🥞', name:'Poha',            desc:'Kanda poha with sev, lemon & coriander',         price:40,  badge:'popular' },
+    { id:'b2', emoji:'🫓', name:'Upma',            desc:'Rava upma with green chutney',                   price:40  },
+    { id:'b3', emoji:'🥙', name:'Idli Sambar',     desc:'2 soft idli with hot sambar & coconut chutney',  price:50,  badge:'popular' },
+    { id:'b4', emoji:'🥗', name:'Sabudana Khichdi',desc:'With roasted peanut, lemon & ghee',              price:60  },
+    { id:'b5', emoji:'🥞', name:'Dosa',            desc:'Crispy plain dosa with sambar & chutney',        price:70,  badge:'spicy' },
+    { id:'b6', emoji:'🥙', name:'Masala Dosa',     desc:'Crispy dosa stuffed with spiced potato filling', price:90,  badge:'popular' },
+  ],
+  thali: [
+    { id:'t1', emoji:'🍛', name:'Pahunchar Special Thali', desc:'Dal, 3 sabzi, roti, rice, salad, papad, chaas – unlimited', price:150, badge:'popular' },
+    { id:'t2', emoji:'🥘', name:'Mini Thali',              desc:'Dal, 1 sabzi, 2 roti, rice, papad',                         price:90  },
+    { id:'t3', emoji:'🎊', name:'Festival Thali',          desc:'Dal, 4 sabzi, puri, kheer, papad, pickle',                  price:200, badge:'popular' },
+  ],
+  roti: [
+    { id:'r1', emoji:'🫓', name:'Chapati (2 pcs)',  desc:'Soft wheat chapati with ghee',        price:20 },
+    { id:'r2', emoji:'🥙', name:'Puri Bhaji (4)',   desc:'Crispy puris with aloo bhaji',         price:60, badge:'popular' },
+    { id:'r3', emoji:'🍚', name:'Plain Rice',       desc:'Steamed basmati rice',                 price:40 },
+    { id:'r4', emoji:'🍛', name:'Jeera Rice',       desc:'Basmati with cumin & ghee',            price:60 },
+    { id:'r5', emoji:'🍱', name:'Dal Fry + Rice',   desc:'Yellow dal tadka with steamed rice',   price:80, badge:'popular' },
+  ],
+  snacks: [
+    { id:'s1', emoji:'🥙', name:'Vada Pav',       desc:'Mumbai-style potato vada in pav with chutneys',  price:25, badge:'popular' },
+    { id:'s2', emoji:'🍞', name:'Pav Bhaji',       desc:'Spicy bhaji with 4 butter pav & lemon',          price:90, badge:'spicy' },
+    { id:'s3', emoji:'🫙', name:'Samosa (2 pcs)',  desc:'Crispy with green & tamarind chutney',            price:30 },
+    { id:'s4', emoji:'🥗', name:'Bhel Puri',       desc:'Tangy with tamarind chutney & sev',               price:40 },
+    { id:'s5', emoji:'🧆', name:'Misal Pav',       desc:'Sprouted moth curry with pav, farsan & onion',    price:70, badge:'spicy' },
+  ],
+  sweets: [
+    { id:'sw1', emoji:'🍮', name:'Gulab Jamun (2 pcs)', desc:'Soft khoya balls in sugar syrup',               price:40, badge:'popular' },
+    { id:'sw2', emoji:'🍚', name:'Kheer',                desc:'Rice pudding with cardamom & dry fruits',        price:50 },
+    { id:'sw3', emoji:'🟡', name:'Shrikhand',            desc:'Strained yogurt with saffron & cardamom',        price:60 },
+  ],
+  drinks: [
+    { id:'d1', emoji:'☕', name:'Cutting Chai',  desc:'Strong ginger masala tea',           price:15, badge:'popular' },
+    { id:'d2', emoji:'🥛', name:'Lassi',          desc:'Sweet / salted / mango – chilled',   price:60 },
+    { id:'d3', emoji:'🥛', name:'Chaas / Taak',   desc:'Chilled buttermilk with jeera & pudina', price:25, badge:'popular' },
+    { id:'d4', emoji:'🍋', name:'Lemon Soda',     desc:'Sweet / salted / masala',            price:40 },
+    { id:'d5', emoji:'🥭', name:'Mango Juice',    desc:'Fresh seasonal mango juice',         price:50 },
+  ]
+};
+
+/* ══════════════════════════════════════════════
+   CART STATE
+══════════════════════════════════════════════ */
+let cart = {}; // { itemId: qty }
+let currentOrderCode = null;
+let currentOrderData = null;
+
+// In-memory order store (simulates shared state between customer & waiter)
+// Key: code → { items, total, time, confirmed }
+const orderStore = {};
+
+/* ══════════════════════════════════════════════
+   RENDER MENU ITEMS
+══════════════════════════════════════════════ */
+function renderMenu() {
+  Object.keys(MENU).forEach(cat => {
+    const container = document.getElementById('items-' + cat);
+    if (!container) return;
+    container.innerHTML = MENU[cat].map(item => buildItemCard(item)).join('');
+  });
+}
+
+function buildItemCard(item) {
+  const badgeHTML = item.badge === 'popular'
+    ? '<span class="badge-popular">⭐ Popular</span>'
+    : item.badge === 'spicy'
+    ? '<span class="badge-spicy">🌶 Spicy</span>'
+    : '';
+  return `
+    <div class="item-card" id="card-${item.id}">
+      <div class="item-emoji">${item.emoji}</div>
+      <div class="item-body">
+        <div class="item-top"><span class="item-name">${item.name}</span>${badgeHTML}</div>
+        <div class="item-desc">${item.desc}</div>
+      </div>
+      <div class="item-right">
+        <div class="item-price">₹${item.price}</div>
+        <div id="ctrl-${item.id}">
+          <button class="add-btn" onclick="addItem('${item.id}')">+ Add</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function addItem(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  renderQtyCtrl(id);
+  updateCartBar();
+}
+
+function changeQty(id, delta) {
+  cart[id] = (cart[id] || 0) + delta;
+  if (cart[id] <= 0) { delete cart[id]; }
+  renderQtyCtrl(id);
+  updateCartBar();
+}
+
+function renderQtyCtrl(id) {
+  const ctrl = document.getElementById('ctrl-' + id);
+  if (!ctrl) return;
+  const qty = cart[id] || 0;
+  const card = document.getElementById('card-' + id);
+  if (qty === 0) {
+    ctrl.innerHTML = `<button class="add-btn" onclick="addItem('${id}')">+ Add</button>`;
+    card && card.classList.remove('in-cart');
+  } else {
+    ctrl.innerHTML = `
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty('${id}',-1)">−</button>
+        <span class="qty-num">${qty}</span>
+        <button class="qty-btn" onclick="changeQty('${id}',+1)">+</button>
+      </div>`;
+    card && card.classList.add('in-cart');
+  }
+}
+
+function addSpecial() {
+  const id = 'special';
+  if (!cart[id]) cart[id] = 0;
+  cart[id]++;
+  updateCartBar();
+  // Visual feedback
+  const card = document.querySelector('.special-card');
+  card.style.transform = 'scale(0.97)';
+  setTimeout(() => card.style.transform = '', 200);
+}
+
+function updateCartBar() {
+  const totalQty = Object.values(cart).reduce((a,b) => a+b, 0);
+  const totalAmt = calcTotal();
+  const bar = document.getElementById('cart-bar');
+  document.getElementById('cart-count').textContent = totalQty;
+  document.getElementById('cart-items-text').textContent = totalQty === 1 ? '1 item' : totalQty + ' items';
+  document.getElementById('cart-total-display').textContent = '₹' + totalAmt;
+  if (totalQty > 0) bar.classList.add('visible');
+  else bar.classList.remove('visible');
+}
+
+function calcTotal() {
+  let total = 0;
+  Object.entries(cart).forEach(([id, qty]) => {
+    if (id === 'special') { total += 130 * qty; return; }
+    const item = findItem(id);
+    if (item) total += item.price * qty;
+  });
+  return total;
+}
+
+function findItem(id) {
+  for (const cat of Object.values(MENU)) {
+    const found = cat.find(i => i.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+/* ══════════════════════════════════════════════
+   CATEGORY FILTER
+══════════════════════════════════════════════ */
+function filter(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const special = document.getElementById('special-section');
+  if (cat === 'all') {
+    document.querySelectorAll('.cat-section').forEach(s => s.style.display = 'block');
+    special.style.display = 'block';
+  } else {
+    special.style.display = 'none';
+    document.querySelectorAll('.cat-section').forEach(s => {
+      if (s.id === 'special-section') return;
+      s.style.display = s.dataset.cat === cat ? 'block' : 'none';
+    });
+  }
+  window.scrollTo({ top: 60, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════════
+   ORDER PAGE
+══════════════════════════════════════════════ */
+function generateCode() {
+  const n = Math.floor(10 + Math.random() * 90);
+  return 'PAH-' + n;
+}
+
+function showOrderPage() {
+  if (Object.keys(cart).length === 0) return;
+
+  // Generate unique code
+  currentOrderCode = generateCode();
+
+  // Build order items list
+  const items = [];
+  Object.entries(cart).forEach(([id, qty]) => {
+    if (id === 'special') {
+      items.push({ id, emoji:'🍛', name:"Today's Special Thali", price:130, qty });
+    } else {
+      const item = findItem(id);
+      if (item) items.push({ id, emoji: item.emoji, name: item.name, price: item.price, qty });
+    }
+  });
+  const total = calcTotal();
+  const time = new Date().toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+
+  // Store order
+  currentOrderData = { code: currentOrderCode, items, total, time, confirmed: false };
+  orderStore[currentOrderCode] = currentOrderData;
+
+  // Show order code
+  document.getElementById('display-code').textContent = currentOrderCode;
+
+  // Render items list
+  const listEl = document.getElementById('order-items-list');
+  listEl.innerHTML = items.map(it => `
+    <div class="order-item-row">
+      <div>
+        <div class="order-item-name">${it.emoji} ${it.name}</div>
+        <div class="order-item-qty">× ${it.qty}</div>
+      </div>
+      <div class="order-item-price">₹${it.price * it.qty}</div>
+    </div>`).join('');
+  document.getElementById('order-total').textContent = '₹' + total;
+
+  // Generate QR
+  document.getElementById('qrcode').innerHTML = '';
+  const qrData = JSON.stringify({ code: currentOrderCode, items, total, time });
+  new QRCode(document.getElementById('qrcode'), {
+    text: qrData,
+    width: 200,
+    height: 200,
+    colorDark: '#5C3A1E',
+    colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  showPage('page-order');
+}
+
+function goBack() {
+  showPage('page-menu');
+}
+
+/* ══════════════════════════════════════════════
+   PAGE ROUTING
+══════════════════════════════════════════════ */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ══════════════════════════════════════════════
+   WAITER — TAB SWITCH
+══════════════════════════════════════════════ */
+function switchWaiterTab(tab) {
+  document.getElementById('tab-scan').classList.toggle('active', tab === 'scan');
+  document.getElementById('tab-type').classList.toggle('active', tab === 'type');
+  document.getElementById('waiter-scan-panel').style.display = tab === 'scan' ? 'block' : 'none';
+  document.getElementById('waiter-type-panel').style.display = tab === 'type' ? 'block' : 'none';
+  clearWaiterResult();
+  if (tab !== 'scan') stopScan();
+}
+
+/* ══════════════════════════════════════════════
+   WAITER — QR SCANNER
+══════════════════════════════════════════════ */
+let scanInterval = null;
+
+function startScan() {
+  const video = document.getElementById('scanner-video');
+  const placeholder = document.getElementById('scan-placeholder');
+  const stopBtn = document.getElementById('scan-stop-btn');
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(stream => {
+      video.srcObject = stream;
+      video.style.display = 'block';
+      placeholder.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+
+      scanInterval = setInterval(() => {
+        const canvas = document.getElementById('scanner-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code && code.data) {
+          try {
+            const parsed = JSON.parse(code.data);
+            if (parsed.code && parsed.items) {
+              stopScan();
+              showFlash('✓ QR Scanned!');
+              loadOrder(parsed);
+            }
+          } catch(e) {}
+        }
+      }, 300);
+    })
+    .catch(() => {
+      placeholder.querySelector('p').textContent = 'Camera not available. Use Enter Code tab.';
+    });
+}
+
+function stopScan() {
+  const video = document.getElementById('scanner-video');
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(t => t.stop());
+    video.srcObject = null;
+  }
+  video.style.display = 'none';
+  document.getElementById('scan-placeholder').style.display = 'block';
+  document.getElementById('scan-stop-btn').style.display = 'none';
+  if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
+}
+
+function showFlash(msg) {
+  const el = document.getElementById('scan-flash');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ══════════════════════════════════════════════
+   WAITER — MANUAL CODE LOOKUP
+══════════════════════════════════════════════ */
+function lookupCode() {
+  const code = document.getElementById('code-input').value.trim().toUpperCase();
+  if (!code) return;
+
+  const order = orderStore[code];
+  if (!order) {
+    document.getElementById('w-error').classList.add('show');
+    document.getElementById('w-order-card').classList.remove('show');
+    document.getElementById('w-confirm-btn').style.display = 'none';
+    return;
+  }
+  document.getElementById('w-error').classList.remove('show');
+  loadOrder(order);
+}
+
+function loadOrder(order) {
+  // Store in orderStore if came from QR
+  if (!orderStore[order.code]) orderStore[order.code] = order;
+
+  document.getElementById('w-order-code-display').textContent = order.code;
+  document.getElementById('w-order-time').textContent = order.time || '';
+
+  const listEl = document.getElementById('w-order-items-list');
+  listEl.innerHTML = order.items.map(it => `
+    <div class="w-order-item">
+      <div class="w-item-left">
+        <div class="w-item-emoji">${it.emoji}</div>
+        <div>
+          <div class="w-item-name">${it.name}</div>
+          <div class="w-item-qty">Qty: ${it.qty}</div>
+        </div>
+      </div>
+      <div class="w-item-price">₹${it.price * it.qty}</div>
+    </div>`).join('');
+
+  document.getElementById('w-order-total').textContent = '₹' + order.total;
+
+  const card = document.getElementById('w-order-card');
+  card.classList.add('show');
+
+  const confirmBtn = document.getElementById('w-confirm-btn');
+  confirmBtn.style.display = 'flex';
+  confirmBtn.classList.remove('confirmed');
+  confirmBtn.textContent = '✓ Order Received — Confirmed';
+  confirmBtn.dataset.code = order.code;
+}
+
+function clearWaiterResult() {
+  document.getElementById('w-order-card').classList.remove('show');
+  document.getElementById('w-confirm-btn').style.display = 'none';
+  document.getElementById('w-error').classList.remove('show');
+}
+
+/* ══════════════════════════════════════════════
+   WAITER — CONFIRM ORDER → TRIGGERS CUSTOMER SCREEN
+══════════════════════════════════════════════ */
+function confirmOrder() {
+  const btn = document.getElementById('w-confirm-btn');
+  const code = btn.dataset.code;
+
+  if (orderStore[code]) orderStore[code].confirmed = true;
+
+  btn.classList.add('confirmed');
+  btn.textContent = '✅ Confirmed!';
+
+  // If this is the current customer's order (same browser demo), show overlay
+  if (code === currentOrderCode) {
+    showReceivedOverlay(code);
+  }
+
+  showFlash('Order ' + code + ' confirmed!');
+}
+
+function showReceivedOverlay(code) {
+  document.getElementById('received-ref').textContent = code;
+  document.getElementById('received-overlay').classList.add('show');
+}
+
+function resetAll() {
+  cart = {};
+  currentOrderCode = null;
+  currentOrderData = null;
+  document.getElementById('received-overlay').classList.remove('show');
+  // Re-render menu to clear qty controls
+  renderMenu();
+  updateCartBar();
+  showPage('page-menu');
+}
+
+/* ══════════════════════════════════════════════
+   URL ROUTING — ?waiter opens waiter page
+══════════════════════════════════════════════ */
+function checkRoute() {
+  if (window.location.search.includes('waiter') ||
+      window.location.hash === '#waiter') {
+    showPage('page-waiter');
+  }
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+renderMenu();
+checkRoute();
+</script>
+</body>
+</html>
