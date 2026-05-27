@@ -32,25 +32,25 @@ const CATEGORIES = [
 const MENU = [
   // ── Starters ──────────────────────────────────────────────────
   {
-    id: 1, name: 'Bruschetta al Pomodoro', cat: 'starters', price: 8.99,
+    id: 1, name: 'Bruschetta al Pomodoro', cat: 'starters', price: 746,
     desc: 'Grilled bread rubbed with garlic, topped with diced heirloom tomatoes, fresh basil and extra-virgin olive oil.',
     img: 'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=400&h=300&fit=crop&auto=format',
     popular: true, veg: true, emoji: '🥖'
   },
   {
-    id: 2, name: 'Crispy Calamari', cat: 'starters', price: 12.99,
+    id: 2, name: 'Crispy Calamari', cat: 'starters', price: 1078,
     desc: 'Golden-fried calamari rings with a light panko crust, served with house marinara and fresh lemon.',
     img: 'https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?w=400&h=300&fit=crop&auto=format',
     popular: true, emoji: '🦑'
   },
   {
-    id: 3, name: 'Burrata & Prosciutto', cat: 'starters', price: 14.99,
+    id: 3, name: 'Burrata & Prosciutto', cat: 'starters', price: 1244,
     desc: 'Creamy burrata mozzarella paired with aged prosciutto di Parma, rocket leaves and balsamic glaze.',
     img: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop&auto=format',
     emoji: '🧀'
   },
   {
-    id: 4, name: 'French Onion Soup', cat: 'starters', price: 9.99,
+    id: 4, name: 'French Onion Soup', cat: 'starters', price: 829,
     desc: 'Classic slow-caramelised onion broth topped with a toasted baguette crouton and melted Gruyère.',
     img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🥣'
@@ -58,25 +58,25 @@ const MENU = [
 
   // ── Mains ─────────────────────────────────────────────────────
   {
-    id: 5, name: 'Grilled Ribeye Steak', cat: 'mains', price: 34.99,
+    id: 5, name: 'Grilled Ribeye Steak', cat: 'mains', price: 2904,
     desc: '300g prime ribeye, grilled to your liking, served with truffle butter, confit potatoes and seasonal vegetables.',
     img: 'https://images.unsplash.com/photo-1544025162-d76538f9e304?w=400&h=300&fit=crop&auto=format',
     popular: true, emoji: '🥩'
   },
   {
-    id: 6, name: 'Pan-Seared Salmon', cat: 'mains', price: 26.99,
+    id: 6, name: 'Pan-Seared Salmon', cat: 'mains', price: 2240,
     desc: 'Atlantic salmon fillet with crispy skin, lemon-caper butter sauce, asparagus and wild-rice pilaf.',
     img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=300&fit=crop&auto=format',
     popular: true, emoji: '🐟'
   },
   {
-    id: 7, name: 'Truffle Roast Chicken', cat: 'mains', price: 22.99,
+    id: 7, name: 'Truffle Roast Chicken', cat: 'mains', price: 1908,
     desc: 'Free-range half chicken roasted with black truffle butter under the skin, served with root vegetable purée.',
     img: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c7?w=400&h=300&fit=crop&auto=format',
     emoji: '🍗'
   },
   {
-    id: 8, name: 'Braised Short Rib', cat: 'mains', price: 29.99,
+    id: 8, name: 'Braised Short Rib', cat: 'mains', price: 2489,
     desc: 'Slow-braised beef short rib in red wine reduction, served over silky mashed potatoes with gremolata.',
     img: 'https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=300&fit=crop&auto=format',
     emoji: '🍖'
@@ -84,25 +84,25 @@ const MENU = [
 
   // ── Pizza ─────────────────────────────────────────────────────
   {
-    id: 9, name: 'Margherita Classica', cat: 'pizza', price: 15.99,
+    id: 9, name: 'Margherita Classica', cat: 'pizza', price: 1327,
     desc: 'San Marzano tomato base, fior di latte mozzarella, fresh basil and a drizzle of extra-virgin olive oil.',
     img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop&auto=format',
     popular: true, veg: true, emoji: '🍕'
   },
   {
-    id: 10, name: 'Truffle Mushroom', cat: 'pizza', price: 18.99,
+    id: 10, name: 'Truffle Mushroom', cat: 'pizza', price: 1576,
     desc: 'Wild mushrooms, black truffle cream, taleggio cheese and fresh thyme finished with truffle oil.',
     img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍕'
   },
   {
-    id: 11, name: 'Pepperoni Supreme', cat: 'pizza', price: 16.99,
+    id: 11, name: 'Pepperoni Supreme', cat: 'pizza', price: 1410,
     desc: 'Double-layered premium pepperoni, mozzarella, roasted red capsicum and a spicy tomato base.',
     img: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&h=300&fit=crop&auto=format',
     spicy: true, emoji: '🍕'
   },
   {
-    id: 12, name: 'Quattro Formaggi', cat: 'pizza', price: 17.99,
+    id: 12, name: 'Quattro Formaggi', cat: 'pizza', price: 1493,
     desc: 'Four-cheese celebration — mozzarella, gorgonzola, fontina and pecorino romano on a cream base.',
     img: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍕'
@@ -110,25 +110,25 @@ const MENU = [
 
   // ── Pasta ─────────────────────────────────────────────────────
   {
-    id: 13, name: 'Spaghetti Carbonara', cat: 'pasta', price: 16.99,
+    id: 13, name: 'Spaghetti Carbonara', cat: 'pasta', price: 1410,
     desc: 'Silky egg-yolk and pecorino sauce with crispy guanciale and freshly cracked black pepper.',
     img: 'https://images.unsplash.com/photo-1621996346565-ead343701eea?w=400&h=300&fit=crop&auto=format',
     popular: true, emoji: '🍝'
   },
   {
-    id: 14, name: 'Penne Arrabiata', cat: 'pasta', price: 14.99,
+    id: 14, name: 'Penne Arrabiata', cat: 'pasta', price: 1244,
     desc: 'Fiery San Marzano tomato sauce with garlic, chilli flakes and fresh flat-leaf parsley. Vegan.',
     img: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=400&h=300&fit=crop&auto=format',
     veg: true, spicy: true, emoji: '🍝'
   },
   {
-    id: 15, name: 'Lobster Linguine', cat: 'pasta', price: 28.99,
+    id: 15, name: 'Lobster Linguine', cat: 'pasta', price: 2406,
     desc: 'Fresh lobster tail with cherry tomatoes, chilli, bisque-butter sauce over silky linguine.',
     img: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&h=300&fit=crop&auto=format',
     emoji: '🦞'
   },
   {
-    id: 16, name: 'Ravioli al Burro', cat: 'pasta', price: 15.99,
+    id: 16, name: 'Ravioli al Burro', cat: 'pasta', price: 1327,
     desc: 'Handmade ricotta & spinach ravioli tossed in brown butter and sage, topped with toasted pine nuts.',
     img: 'https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍝'
@@ -136,25 +136,25 @@ const MENU = [
 
   // ── Desserts ──────────────────────────────────────────────────
   {
-    id: 17, name: 'Tiramisu Classico', cat: 'desserts', price: 9.99,
+    id: 17, name: 'Tiramisu Classico', cat: 'desserts', price: 829,
     desc: 'Layers of mascarpone cream and espresso-soaked Savoiardi, dusted with premium Valrhona cocoa.',
     img: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=300&fit=crop&auto=format',
     popular: true, veg: true, emoji: '🍮'
   },
   {
-    id: 18, name: 'Crème Brûlée', cat: 'desserts', price: 8.99,
+    id: 18, name: 'Crème Brûlée', cat: 'desserts', price: 746,
     desc: 'Vanilla bean custard beneath a perfectly torched caramelised sugar crust. Timeless and elegant.',
     img: 'https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍮'
   },
   {
-    id: 19, name: 'Dark Chocolate Fondant', cat: 'desserts', price: 10.99,
+    id: 19, name: 'Dark Chocolate Fondant', cat: 'desserts', price: 912,
     desc: 'Warm 70% bittersweet chocolate cake with a molten centre, paired with vanilla bean ice cream.',
     img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476f?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍫'
   },
   {
-    id: 20, name: 'Panna Cotta', cat: 'desserts', price: 7.99,
+    id: 20, name: 'Panna Cotta', cat: 'desserts', price: 663,
     desc: 'Silky Italian vanilla cream, gently set and topped with vibrant mixed-berry coulis.',
     img: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍮'
@@ -162,25 +162,25 @@ const MENU = [
 
   // ── Drinks ────────────────────────────────────────────────────
   {
-    id: 21, name: 'Sparkling Lemonade', cat: 'drinks', price: 4.99,
+    id: 21, name: 'Sparkling Lemonade', cat: 'drinks', price: 414,
     desc: 'House-squeezed lemon juice, elderflower cordial, fresh mint and sparkling water. Refreshing.',
     img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400&h=300&fit=crop&auto=format',
     veg: true, emoji: '🍋'
   },
   {
-    id: 22, name: 'Mango Passionfruit Mocktail', cat: 'drinks', price: 5.99,
+    id: 22, name: 'Mango Passionfruit Mocktail', cat: 'drinks', price: 497,
     desc: 'Blended mango with passionfruit syrup, fresh lime and sparkling water. Tropical and vibrant.',
     img: 'https://images.unsplash.com/photo-1546171753-97d7676e4602?w=400&h=300&fit=crop&auto=format',
     popular: true, veg: true, emoji: '🥭'
   },
   {
-    id: 23, name: 'Espresso Martini', cat: 'drinks', price: 12.99,
+    id: 23, name: 'Espresso Martini', cat: 'drinks', price: 1078,
     desc: 'Premium vodka, freshly pulled espresso, Kahlúa and sugar syrup — shaken until velvety.',
     img: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=300&fit=crop&auto=format',
     emoji: '🍸'
   },
   {
-    id: 24, name: 'Craft Lager', cat: 'drinks', price: 7.99,
+    id: 24, name: 'Craft Lager', cat: 'drinks', price: 663,
     desc: 'Locally brewed craft lager, crisp and clean. Ask your waiter about today\'s tap selection.',
     img: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=400&h=300&fit=crop&auto=format',
     emoji: '🍺'
@@ -295,7 +295,7 @@ function refreshCartFAB() {
   fab.classList.toggle('hidden', S.view !== 'home' || n === 0);
   document.getElementById('cart-count').textContent = n;
 }
-function fmt(n) { return '$' + n.toFixed(2); }
+function fmt(n) { return '₹' + n.toFixed(2); }
 function fmtTime(ts) {
   return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
@@ -453,8 +453,8 @@ function renderCart() {
   }
 
   const sub   = cartTotal();
-  const tax   = sub * 0.10;
-  const total = sub + tax;
+  const tax   = 0;
+  const total = sub;
 
   const itemsHtml = entries.map(([id, qty]) => {
     const item = MENU.find(m => m.id === +id);
@@ -487,10 +487,6 @@ function renderCart() {
       <div class="summary-row">
         <span>Subtotal (${cartCount()} item${cartCount()!==1?'s':''})</span>
         <span>${fmt(sub)}</span>
-      </div>
-      <div class="summary-row">
-        <span>Service tax (10%)</span>
-        <span>${fmt(tax)}</span>
       </div>
       <div class="summary-row total">
         <span>Total</span>
@@ -530,8 +526,8 @@ function placeOrder() {
 
   const orderId = generateOrderId();
   const sub     = cartTotal();
-  const tax     = sub * 0.10;
-  const total   = sub + tax;
+  const tax     = 0;
+  const total   = sub;
 
   const items = entries.map(([id, qty]) => {
     const item = MENU.find(m => m.id === +id);
@@ -587,11 +583,7 @@ function showOrderSuccess(order) {
       <div class="success-summary-hd">Order Summary</div>
       <div class="success-summary-body">
         ${itemsHtml}
-        <div class="s-row" style="margin-top:8px;border-top:1px solid var(--border);padding-top:12px">
-          <div class="s-name" style="color:var(--text-muted)">Tax (10%)</div>
-          <div class="s-price" style="color:var(--text-muted)">${fmt(order.tax)}</div>
-        </div>
-        <div class="s-row" style="font-size:17px;font-weight:700">
+        <div class="s-row" style="margin-top:8px;border-top:2px solid var(--border);padding-top:12px;font-size:17px;font-weight:700">
           <div class="s-name">Total</div>
           <div class="s-price" style="color:var(--accent)">${fmt(order.total)}</div>
         </div>
@@ -975,13 +967,13 @@ function handleQRScan(text) {
             sub += itemSub;
             return { id: it.id, name, price, qty: it.q, sub: itemSub };
           });
-          const tax = sub * 0.10;
+          const tax = 0;
           orders[oId] = {
             orderId: oId,
             items: items,
             sub: sub,
             tax: tax,
-            total: sub + tax,
+            total: sub,
             ts: data.ts || Date.now(),
             status: 'new'
           };
@@ -1200,3 +1192,4 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+
