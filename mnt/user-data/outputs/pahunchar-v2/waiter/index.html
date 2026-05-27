@@ -3,39 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Hotel Pahunchar – Waiter Panel</title>
+  <title>Hotel Pahunchar – Waiter</title>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 </head>
 <body>
 
-  <!-- HEADER -->
   <div class="waiter-header">
     <div class="waiter-badge"><span>🍽 Waiter Panel</span></div>
     <h1>Hotel Pahunchar</h1>
     <p>Scan or enter customer order code</p>
   </div>
 
-  <!-- BODY -->
   <div class="waiter-body">
 
-    <!-- MODE TABS -->
     <div class="w-tabs">
-      <button class="w-tab active" id="tab-scan" onclick="switchTab('scan')">
-        <span>📷</span> Scan QR
-      </button>
-      <button class="w-tab" id="tab-type" onclick="switchTab('type')">
-        <span>⌨️</span> Enter Code
-      </button>
+      <button class="w-tab active" id="tab-scan" onclick="switchTab('scan')">📷 Scan QR</button>
+      <button class="w-tab" id="tab-type" onclick="switchTab('type')">⌨️ Enter Code</button>
     </div>
 
-    <!-- SCAN PANEL -->
     <div id="panel-scan">
-      <div class="scan-area">
+      <div class="scan-area" id="scan-area">
         <video id="scanner-video" autoplay playsinline></video>
         <canvas id="scanner-canvas"></canvas>
-        <div class="scan-placeholder" id="scan-placeholder">
+        <div id="scan-placeholder">
           <div class="scan-icon">📷</div>
           <p>Tap below to open camera<br>and scan customer's QR code</p>
           <button class="scan-start-btn" onclick="startScan()">Start Camera</button>
@@ -44,33 +36,22 @@
       </div>
     </div>
 
-    <!-- TYPE PANEL -->
     <div id="panel-type" style="display:none;">
       <div class="manual-area">
         <label>Customer Order Code</label>
         <div class="code-input-wrap">
-          <input
-            class="code-input"
-            id="code-input"
-            placeholder="e.g. PAH-47"
-            maxlength="7"
-            oninput="this.value=this.value.toUpperCase()"
-          >
+          <input class="code-input" id="code-input" placeholder="e.g. PAH-47" maxlength="7" oninput="this.value=this.value.toUpperCase()">
           <button class="code-submit-btn" onclick="lookupCode()">Get Order</button>
         </div>
       </div>
     </div>
 
-    <!-- ERROR -->
-    <div class="w-error" id="w-error">
-      ❌ Code not found. Ask customer to show their screen again.
-    </div>
+    <div class="w-error" id="w-error">❌ Code not found. Ask customer to show their screen.</div>
 
-    <!-- ORDER CARD -->
     <div class="w-order-card" id="w-order-card">
       <div class="w-order-top">
         <div class="w-order-code" id="w-order-code-display">---</div>
-        <div class="w-order-time"  id="w-order-time">--:--</div>
+        <div class="w-order-time" id="w-order-time">--:--</div>
       </div>
       <div class="w-order-items" id="w-order-items-list"></div>
       <div class="w-order-total">
@@ -79,20 +60,17 @@
       </div>
     </div>
 
-    <!-- CONFIRM BUTTON -->
     <button class="w-confirm-btn" id="w-confirm-btn" onclick="confirmOrder()">
-      ✓ &nbsp; Order Received — Confirm
+      ✓ &nbsp;Order Received — Confirm
     </button>
 
-    <!-- HINT -->
     <div class="waiter-hint">
-      <strong>✓ All waiters work independently — no conflicts.</strong><br>
+      All waiters work independently — no conflicts.<br>
       Scan a customer QR or type their code to load the order.
     </div>
 
-  </div><!-- /waiter-body -->
+  </div>
 
-  <!-- FLASH TOAST -->
   <div class="scan-flash" id="scan-flash">✓ QR Scanned!</div>
 
   <script src="script.js"></script>

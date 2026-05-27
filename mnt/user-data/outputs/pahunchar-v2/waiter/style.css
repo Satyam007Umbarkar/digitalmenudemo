@@ -136,9 +136,9 @@ body {
 /* ══ ORDER CARD ══ */
 .w-order-card {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden; margin-bottom: 1rem; display: none;
+  border-radius: 16px; overflow: hidden; margin-bottom: 1rem;
+  display: none; animation: fadeUp 0.3s ease;
 }
-.w-order-card.show { display: block; animation: fadeUp 0.3s ease; }
 
 .w-order-top {
   background: linear-gradient(135deg, rgba(232,102,26,0.25), rgba(92,58,30,0.25));
@@ -175,11 +175,10 @@ body {
   background: var(--green); color: white; border: none;
   border-radius: 12px; font-size: 16px; font-weight: 600;
   font-family: 'DM Sans', sans-serif; cursor: pointer;
-  align-items: center; justify-content: center; gap: 8px;
+  display: none; align-items: center; justify-content: center; gap: 8px;
   transition: background 0.2s, transform 0.15s;
-  margin-bottom: 1rem; display: none;
+  margin-bottom: 1rem;
 }
-.w-confirm-btn.visible { display: flex; animation: fadeUp 0.3s ease; }
 .w-confirm-btn:active { transform: scale(0.98); }
 .w-confirm-btn.confirmed { background: var(--green-light); pointer-events: none; }
 
