@@ -750,6 +750,7 @@ function renderOrders() {
   container.innerHTML = filtered.map(o => {
     const preview = o.items.slice(0,2).map(i => `${i.name} ×${i.qty}`).join(', ')
       + (o.items.length > 2 ? ` +${o.items.length-2} more` : '');
+    const noteHtml = o.notes ? `<div class="order-note-preview">📝 ${escHtml(o.notes)}</div>` : '';
     return `
       <div class="order-card" data-order-id="${o.orderId}"
            role="button" tabindex="0" aria-label="Order ${o.orderId}"
@@ -762,6 +763,7 @@ function renderOrders() {
           <span class="status-pill ${pillClass[o.status]}">${pillLabel[o.status]}</span>
         </div>
         <div class="order-card-body">
+          ${noteHtml}
           <div class="order-preview">${escHtml(preview)}</div>
         </div>
         <div class="order-card-foot">
