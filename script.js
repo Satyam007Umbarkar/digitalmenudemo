@@ -836,6 +836,14 @@ function renderOrderDetail(order) {
       </div>
     </div>
 
+    <!-- Description / Notes -->
+    <div class="detail-block">
+      <div class="detail-block-title">Customer / Order Notes</div>
+      <div style="padding: 0 var(--sp-md) 14px;">
+        <textarea id="order-notes-input" class="order-note-input" placeholder="E.g. Family name, table number, special requests...">${order.notes || ''}</textarea>
+      </div>
+    </div>
+
     <!-- Items -->
     <div class="detail-block">
       <div class="detail-block-title">Ordered Items</div>
@@ -858,6 +866,14 @@ function renderOrderDetail(order) {
           </button>`).join('')}
       </div>
     </div>`;
+
+  document.getElementById('order-notes-input').addEventListener('input', (e) => {
+    const orders = getOrders();
+    if (orders[order.orderId]) {
+      orders[order.orderId].notes = e.target.value;
+      saveOrders(orders);
+    }
+  });
 }
 
 function updateStatus(orderId, newStatus) {
@@ -1110,6 +1126,35 @@ function initEvents() {
     tab.setAttribute('aria-selected', 'true');
     S.waiterTab = tab.dataset.status;
     renderOrders();
+  });
+
+  // --- Waiter: Clear Actions ---
+  document.getElementById('clear-status-btn').addEventListener('click', () => {
+    if (confirm(`Are you sure you want to clear all '${S.waiterTab}' orders?`)) {
+      const orders = getOrders();
+      let cleared = 0;
+      Object.keys(orders).forEach(id => {
+        if (orders[id].status === S.waiterTab) {
+          delete orders[id];
+          cleared++;
+        }
+      });
+      if (cleared > 0) {
+        saveOrders(orders);
+        renderWaiter();
+        toast(`Cleared ${cleared} orders.`);
+      } else {
+        toast(`No '${S.waiterTab}' orders to clear.`, 'info');
+      }
+    }
+  });
+
+  document.getElementById('clear-all-btn').addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear ALL orders? This cannot be undone.')) {
+      saveOrders({});
+      renderWaiter();
+      toast('All orders cleared.');
+    }
   });
 
   // --- Waiter: manual lookup ---

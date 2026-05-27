@@ -784,6 +784,12 @@ h1, h2, h3 { line-height: 1.2; }
 }
 .tab-btn.active .tab-badge { background: rgba(0,0,0,0.18); }
 
+/* Waiter Actions Bar */
+.waiter-actions-bar {
+  display: flex; gap: var(--sp-sm); justify-content: flex-end;
+  padding: 0 var(--sp-md) var(--sp-md);
+}
+
 /* Order Cards */
 .orders-list { padding: 0 var(--sp-md); display: flex; flex-direction: column; gap: var(--sp-md); }
 .order-card {
@@ -910,6 +916,25 @@ h1, h2, h3 { line-height: 1.2; }
 .btn-s-served   { background: rgba(112,112,144,0.10); color: var(--s-served); border: 1.5px solid rgba(112,112,144,0.25); }
 .btn-s-served:hover   { background: rgba(112,112,144,0.22); }
 .btn-s-served.on   { background: var(--s-served); color: #fff; border-color: transparent; }
+
+/* Order Note Input */
+.order-note-input {
+  width: 100%;
+  padding: 10px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--r-sm);
+  resize: vertical;
+  min-height: 70px;
+  font-family: inherit;
+  font-size: 14px;
+  margin-top: 8px;
+}
+.order-note-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
 
 /* =============================================================
    RESPONSIVE ADJUSTMENTS
