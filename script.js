@@ -610,13 +610,18 @@ function showOrderSuccess(order) {
       if (!container) return;
       container.innerHTML = '';
       if (typeof QRCode !== 'undefined') {
+        const qrData = {
+          oId: order.orderId,
+          ts: order.ts,
+          i: order.items.map(item => ({ id: item.id, q: item.qty }))
+        };
         new QRCode(container, {
-          text:         JSON.stringify({ orderId: order.orderId }),
+          text:         JSON.stringify(qrData),
           width:        200,
           height:       200,
           colorDark:    '#000000',
           colorLight:   '#ffffff',
-          correctLevel: QRCode.CorrectLevel.H,
+          correctLevel: QRCode.CorrectLevel.L,
         });
       } else {
         container.innerHTML = `<div style="padding:16px;font-size:13px;color:#888;text-align:center">
@@ -937,9 +942,37 @@ function handleQRScan(text) {
   const statusEl = document.getElementById('scanner-status');
   try {
     const data = JSON.parse(text);
-    if (data.orderId) {
-      statusEl.innerHTML = `<span style="color:var(--success)">✓ Found Order #${data.orderId}</span>`;
-      setTimeout(() => openOrderDetail(data.orderId), 700);
+    const oId = data.oId || data.orderId;
+    
+    if (oId) {
+      if (data.i) {
+        const orders = getOrders();
+        if (!orders[oId]) {
+          let sub = 0;
+          const items = data.i.map(it => {
+            const menuIt = MENU.find(m => m.id === it.id);
+            const price = menuIt ? menuIt.price : 0;
+            const name = menuIt ? menuIt.name : 'Unknown';
+            const itemSub = price * it.q;
+            sub += itemSub;
+            return { id: it.id, name, price, qty: it.q, sub: itemSub };
+          });
+          const tax = sub * 0.10;
+          orders[oId] = {
+            orderId: oId,
+            items: items,
+            sub: sub,
+            tax: tax,
+            total: sub + tax,
+            ts: data.ts || Date.now(),
+            status: 'new'
+          };
+          saveOrders(orders);
+        }
+      }
+
+      statusEl.innerHTML = `<span style="color:var(--success)">✓ Found Order #${oId}</span>`;
+      setTimeout(() => openOrderDetail(oId), 700);
     } else {
       statusEl.textContent = 'QR code does not contain an order.';
       S.scanning = false;
