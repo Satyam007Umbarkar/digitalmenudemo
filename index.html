@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Restaurant Digital Menu</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+
+<div id="splash-screen">
+
+    <div class="logo-wrapper">
+        <img src="logo.png" id="restaurant-logo">
+        <h1>Restaurant Name</h1>
+        <p>Premium Digital Menu</p>
+    </div>
+
+</div>
+
+<!-- MAIN APP -->
+
+<div id="app">
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="brand">
+
+            <img src="logo.png" class="small-logo">
+
+            <div>
+                <h2>Restaurant Name</h2>
+                <span>Fresh • Fast • Delicious</span>
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- SEARCH -->
+
+    <section class="search-section">
+
+        <input
+        type="text"
+        id="searchInput"
+        placeholder="Search food..."
+        >
+
+    </section>
+
+    <!-- CATEGORY -->
+
+    <section class="categories">
+
+        <button class="category active" data-category="all">
+            All
+        </button>
+
+        <button class="category" data-category="breakfast">
+            Breakfast
+        </button>
+
+        <button class="category" data-category="snacks">
+            Snacks
+        </button>
+
+        <button class="category" data-category="drinks">
+            Drinks
+        </button>
+
+    </section>
+
+    <!-- MENU ITEMS -->
+
+    <section id="menu-container">
+
+    </section>
+
+</div>
+
+<!-- FLOATING CART -->
+
+<button id="cart-btn">
+
+    🛒 Cart
+    <span id="cart-count">0</span>
+
+</button>
+
+<!-- CART MODAL -->
+
+<div id="cart-modal">
+
+    <div class="cart-content">
+
+        <div class="cart-header">
+
+            <h2>Your Order</h2>
+
+            <button id="close-cart">
+                ✕
+            </button>
+
+        </div>
+
+        <div id="cart-items">
+
+        </div>
+
+        <div class="cart-footer">
+
+            <h3>
+                Total:
+                ₹<span id="cart-total">0</span>
+            </h3>
+
+            <button id="generate-order">
+
+                Generate QR
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- QR PAGE -->
+
+<div id="qr-page">
+
+    <div class="qr-card">
+
+        <h2>Show this QR to Waiter</h2>
+
+        <div id="qrcode"></div>
+
+        <div id="order-summary"></div>
+
+        <button id="new-order">
+            New Order
+        </button>
+
+    </div>
+
+</div>
+
+<!-- WAITER BUTTON -->
+
+<button id="waiter-btn">
+
+👨‍🍳
+
+</button>
+
+<!-- WAITER LOGIN -->
+
+<div id="waiter-login">
+
+    <div class="waiter-box">
+
+        <h2>Waiter Access</h2>
+
+        <input
+        type="password"
+        id="waiter-password"
+        placeholder="Password"
+        >
+
+        <button id="login-btn">
+
+            Enter
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- WAITER PANEL -->
+
+<div id="waiter-panel">
+
+    <div class="waiter-header">
+
+        <h2>Waiter Scanner</h2>
+
+        <button id="close-waiter">
+            ✕
+        </button>
+
+    </div>
+
+    <div class="scanner-area">
+
+        <video
+        id="scanner-video"
+        autoplay
+        playsinline>
+        </video>
+
+        <canvas id="scanner-canvas"></canvas>
+
+        <button id="start-scan">
+
+            Start Scanner
+
+        </button>
+
+    </div>
+
+    <div id="order-result">
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
