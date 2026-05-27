@@ -1,233 +1,321 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="description" content="Savoria — A premium digital dining experience. Browse our curated menu and order directly from your table." />
+  <meta name="theme-color" content="#0d0d18" />
+  <title>Savoria | Premium Digital Menu</title>
 
-<title>Restaurant Digital Menu</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="style.css">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
-
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
+  <!-- ====== TOAST ====== -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<div id="splash-screen">
-
-    <div class="logo-wrapper">
-        <img src="logo.png" id="restaurant-logo">
-        <h1>Restaurant Name</h1>
-        <p>Premium Digital Menu</p>
+  <!-- ====== PASSWORD MODAL ====== -->
+  <div id="password-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div class="modal-card">
+      <div class="modal-emoji" aria-hidden="true">🔐</div>
+      <h2 id="modal-heading" class="modal-heading">Staff Access</h2>
+      <p class="modal-hint">Enter your staff passcode to continue</p>
+      <input
+        type="password"
+        id="staff-password"
+        class="modal-input"
+        placeholder="Enter passcode"
+        maxlength="10"
+        autocomplete="off"
+        inputmode="numeric"
+        aria-label="Staff passcode"
+      />
+      <p id="modal-error" class="modal-error hidden" role="alert">Incorrect passcode. Please try again.</p>
+      <div class="modal-actions">
+        <button id="modal-cancel-btn" class="btn btn-ghost">Cancel</button>
+        <button id="modal-confirm-btn" class="btn btn-primary">Unlock</button>
+      </div>
     </div>
+  </div>
 
-</div>
+  <!-- ====== FLOATING BUTTONS ====== -->
 
-<!-- MAIN APP -->
+  <!-- Cart FAB -->
+  <button id="cart-fab" class="fab cart-fab hidden" aria-label="View your order">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+      <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"/>
+    </svg>
+    <span id="cart-count" class="cart-badge">0</span>
+  </button>
 
-<div id="app">
+  <!-- Admin/Staff FAB (hidden-ish lock button) -->
+  <button id="admin-fab" class="fab admin-fab" aria-label="Staff login" title="Staff Access">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+      <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd"/>
+    </svg>
+  </button>
 
-    <!-- HEADER -->
+  <!-- ========================================
+       VIEWS
+       ======================================== -->
 
-    <header>
+  <!-- VIEW: HOME (Customer Menu) -->
+  <div id="view-home" class="view active">
 
+    <!-- Sticky Header -->
+    <header class="app-header glass-header">
+      <div class="header-inner">
         <div class="brand">
-
-            <img src="logo.png" class="small-logo">
-
-            <div>
-                <h2>Restaurant Name</h2>
-                <span>Fresh • Fast • Delicious</span>
-            </div>
-
+          <span class="brand-icon" aria-hidden="true">🍽️</span>
+          <div class="brand-text">
+            <span class="brand-name">Savoria</span>
+            <span class="brand-tagline">Fine Dining</span>
+          </div>
         </div>
-
+        <div class="header-right">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle light/dark mode">
+            <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+              <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/>
+            </svg>
+            <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" class="hidden" aria-hidden="true">
+              <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
     </header>
 
-    <!-- SEARCH -->
+    <!-- Hero Banner -->
+    <section class="hero" aria-label="Welcome">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+      <div class="hero-content">
+        <span class="hero-badge">✨ Table Service • Order Now</span>
+        <h2 class="hero-title">Exquisite Flavors,<br><em>Crafted for You</em></h2>
+        <p class="hero-desc">Explore our seasonal menu and order directly from your table</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="hero-stat-num">24</span><span class="hero-stat-lbl">Dishes</span></div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat"><span class="hero-stat-num">7</span><span class="hero-stat-lbl">Categories</span></div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat"><span class="hero-stat-num">4.9★</span><span class="hero-stat-lbl">Rating</span></div>
+        </div>
+      </div>
+    </section>
 
-    <section class="search-section">
-
+    <!-- Search Bar -->
+    <section class="search-section" aria-label="Search menu">
+      <div class="search-box">
+        <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
         <input
-        type="text"
-        id="searchInput"
-        placeholder="Search food..."
-        >
-
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Search dishes, ingredients…"
+          autocomplete="off"
+          aria-label="Search menu items"
+        />
+        <button id="search-clear" class="search-clear-btn hidden" aria-label="Clear search">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
     </section>
 
-    <!-- CATEGORY -->
-
-    <section class="categories">
-
-        <button class="category active" data-category="all">
-            All
-        </button>
-
-        <button class="category" data-category="breakfast">
-            Breakfast
-        </button>
-
-        <button class="category" data-category="snacks">
-            Snacks
-        </button>
-
-        <button class="category" data-category="drinks">
-            Drinks
-        </button>
-
+    <!-- Category Filters -->
+    <section class="categories-section" aria-label="Menu categories">
+      <div class="categories-scroll" id="categories-scroll" role="list"></div>
     </section>
 
-    <!-- MENU ITEMS -->
-
-    <section id="menu-container">
-
+    <!-- Popular Picks -->
+    <section class="menu-section" id="popular-section" aria-label="Popular items">
+      <div class="section-header">
+        <div>
+          <h2 class="section-heading">⭐ Popular Picks</h2>
+          <p class="section-sub">Most loved by our guests</p>
+        </div>
+      </div>
+      <div class="popular-scroll" id="popular-scroll" role="list"></div>
     </section>
 
-</div>
+    <!-- Full Menu Grid -->
+    <section class="menu-section" id="all-menu-section" aria-label="Full menu">
+      <div class="section-header">
+        <h2 class="section-heading" id="menu-heading">🍽️ Full Menu</h2>
+      </div>
+      <div class="menu-grid" id="menu-grid" role="list"></div>
+      <div class="empty-state hidden" id="no-results" aria-live="polite">
+        <div class="empty-icon">🔍</div>
+        <h3>No dishes found</h3>
+        <p>Try a different search term or category</p>
+      </div>
+    </section>
 
-<!-- FLOATING CART -->
+    <div class="bottom-spacer"></div>
+  </div>
+  <!-- END VIEW: HOME -->
 
-<button id="cart-btn">
 
-    🛒 Cart
-    <span id="cart-count">0</span>
+  <!-- VIEW: CART -->
+  <div id="view-cart" class="view">
+    <header class="page-header glass-header">
+      <button class="back-btn" id="cart-back" aria-label="Go back to menu">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <h1 class="page-title">Your Order</h1>
+      <button id="clear-cart-btn" class="text-danger-btn">Clear All</button>
+    </header>
+    <div id="cart-body" aria-live="polite"></div>
+    <div class="bottom-spacer"></div>
+  </div>
+  <!-- END VIEW: CART -->
 
-</button>
 
-<!-- CART MODAL -->
+  <!-- VIEW: ORDER SUCCESS (QR Code) -->
+  <div id="view-order-success" class="view">
+    <header class="page-header glass-header">
+      <button class="back-btn" id="success-back" aria-label="Back to menu">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <h1 class="page-title">Order Placed ✓</h1>
+      <div style="width:38px"></div>
+    </header>
+    <div id="success-body" class="success-body"></div>
+    <div class="bottom-spacer"></div>
+  </div>
+  <!-- END VIEW: ORDER SUCCESS -->
 
-<div id="cart-modal">
 
-    <div class="cart-content">
-
-        <div class="cart-header">
-
-            <h2>Your Order</h2>
-
-            <button id="close-cart">
-                ✕
-            </button>
-
+  <!-- VIEW: WAITER DASHBOARD -->
+  <div id="view-waiter" class="view waiter-view">
+    <header class="waiter-header glass-header">
+      <div class="waiter-brand">
+        <span class="waiter-emoji" aria-hidden="true">👨‍🍳</span>
+        <div>
+          <h1 class="waiter-title">Staff Dashboard</h1>
+          <span class="waiter-sub">Savoria Kitchen</span>
         </div>
-
-        <div id="cart-items">
-
-        </div>
-
-        <div class="cart-footer">
-
-            <h3>
-                Total:
-                ₹<span id="cart-total">0</span>
-            </h3>
-
-            <button id="generate-order">
-
-                Generate QR
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- QR PAGE -->
-
-<div id="qr-page">
-
-    <div class="qr-card">
-
-        <h2>Show this QR to Waiter</h2>
-
-        <div id="qrcode"></div>
-
-        <div id="order-summary"></div>
-
-        <button id="new-order">
-            New Order
+      </div>
+      <div class="waiter-header-actions">
+        <button id="scan-qr-btn" class="btn btn-accent btn-sm" aria-label="Scan customer QR code">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" aria-hidden="true">
+            <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/>
+            <rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+            <path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/>
+            <path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/>
+            <path d="M12 21v-1"/>
+          </svg>
+          Scan QR
         </button>
+        <button id="logout-btn" class="btn-text-muted">Exit</button>
+      </div>
+    </header>
 
-    </div>
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="stats-bar" aria-label="Order statistics"></div>
 
-</div>
-
-<!-- WAITER BUTTON -->
-
-<button id="waiter-btn">
-
-👨‍🍳
-
-</button>
-
-<!-- WAITER LOGIN -->
-
-<div id="waiter-login">
-
-    <div class="waiter-box">
-
-        <h2>Waiter Access</h2>
-
+    <!-- Manual Order Lookup -->
+    <div class="lookup-bar">
+      <div class="lookup-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" class="lookup-icon" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
         <input
-        type="password"
-        id="waiter-password"
-        placeholder="Password"
-        >
-
-        <button id="login-btn">
-
-            Enter
-
-        </button>
-
+          type="text"
+          id="manual-order-id"
+          class="lookup-input"
+          placeholder="Enter Order ID to look up…"
+          maxlength="10"
+          aria-label="Order ID for manual lookup"
+        />
+        <button id="manual-lookup-btn" class="btn btn-primary btn-sm">Look Up</button>
+      </div>
     </div>
 
-</div>
+    <!-- Status Tabs -->
+    <nav class="tabs-bar" id="tabs-bar" aria-label="Order status tabs" role="tablist">
+      <button class="tab-btn active" data-status="new" role="tab" aria-selected="true" id="tab-new">
+        New <span class="tab-badge" id="badge-new">0</span>
+      </button>
+      <button class="tab-btn" data-status="accepted" role="tab" aria-selected="false" id="tab-accepted">
+        Accepted <span class="tab-badge" id="badge-accepted">0</span>
+      </button>
+      <button class="tab-btn" data-status="preparing" role="tab" aria-selected="false" id="tab-preparing">
+        Preparing <span class="tab-badge" id="badge-preparing">0</span>
+      </button>
+      <button class="tab-btn" data-status="ready" role="tab" aria-selected="false" id="tab-ready">
+        Ready <span class="tab-badge" id="badge-ready">0</span>
+      </button>
+      <button class="tab-btn" data-status="served" role="tab" aria-selected="false" id="tab-served">
+        Served <span class="tab-badge" id="badge-served">0</span>
+      </button>
+    </nav>
 
-<!-- WAITER PANEL -->
+    <!-- Orders List -->
+    <div id="orders-list" class="orders-list" role="tabpanel" aria-live="polite"></div>
 
-<div id="waiter-panel">
+    <div class="bottom-spacer"></div>
+  </div>
+  <!-- END VIEW: WAITER DASHBOARD -->
 
-    <div class="waiter-header">
 
-        <h2>Waiter Scanner</h2>
-
-        <button id="close-waiter">
-            ✕
-        </button>
-
+  <!-- VIEW: QR SCANNER -->
+  <div id="view-scanner" class="view">
+    <header class="page-header glass-header">
+      <button class="back-btn" id="scanner-back" aria-label="Back to dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <h1 class="page-title">Scan QR Code</h1>
+      <div style="width:38px"></div>
+    </header>
+    <div class="scanner-body">
+      <p class="scanner-hint">Point your camera at the customer's order QR code</p>
+      <div class="scanner-frame">
+        <div id="qr-reader" class="qr-reader-box"></div>
+        <div class="scanner-corner c-tl"></div>
+        <div class="scanner-corner c-tr"></div>
+        <div class="scanner-corner c-bl"></div>
+        <div class="scanner-corner c-br"></div>
+      </div>
+      <div id="scanner-status" class="scanner-status" aria-live="polite"></div>
     </div>
+  </div>
+  <!-- END VIEW: QR SCANNER -->
 
-    <div class="scanner-area">
 
-        <video
-        id="scanner-video"
-        autoplay
-        playsinline>
-        </video>
+  <!-- VIEW: ORDER DETAIL (Waiter) -->
+  <div id="view-order-detail" class="view">
+    <header class="page-header glass-header">
+      <button class="back-btn" id="detail-back" aria-label="Back to dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <h1 class="page-title">Order Details</h1>
+      <div style="width:38px"></div>
+    </header>
+    <div id="order-detail-body" class="order-detail-body"></div>
+    <div class="bottom-spacer"></div>
+  </div>
+  <!-- END VIEW: ORDER DETAIL -->
 
-        <canvas id="scanner-canvas"></canvas>
 
-        <button id="start-scan">
-
-            Start Scanner
-
-        </button>
-
-    </div>
-
-    <div id="order-result">
-
-    </div>
-
-</div>
-
-<script src="script.js"></script>
-
+  <!-- Scripts at end of body so DOM is ready -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
