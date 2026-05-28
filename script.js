@@ -27,6 +27,7 @@ const CATEGORIES = [
   { id: 'pasta',    name: 'Pasta',      icon: '🍝' },
   { id: 'desserts', name: 'Desserts',   icon: '🍰' },
   { id: 'drinks',   name: 'Drinks',     icon: '🥤' },
+  { id: 'bhaji',   name: 'Bhaji',      icon: '🥬' },
 ];
 
 const MENU = [
@@ -185,6 +186,21 @@ const MENU = [
     img: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=400&h=300&fit=crop&auto=format',
     emoji: '🍺'
   },
+
+  // ── Bhaji ─────────────────────────────────────────────────────
+  {
+    id: 25, name: 'Paneer Tikka', cat: 'bhaji', price: 299,
+    desc: 'Tender paneer cubes marinated in spiced yoghurt, grilled in a tandoor and served with mint chutney.',
+    img: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&h=300&fit=crop&auto=format',
+    popular: true, veg: true, emoji: '🧀'
+  },
+    {
+    id: 26, name: 'Shav Bahji', cat: 'bhaji', price: 200,
+    desc: 'Very Special Dish',
+    img: 'https://images.unsplash.com/photo-1621996346565-ead343701eea?w=400&h=300&fit=crop&auto=format',
+    popular: true, veg: true, spicy: true, emoji: '🍽️'
+  },
+
 ];
 
 // ================================================================
